@@ -1,0 +1,23 @@
+.board-game {
+    -fx-background-color: Sienna;
+    -fx-hgap: 20px;
+    -fx-vgap: 20px;
+    -fx-alignment: center;
+    /* -fx-grid-lines-visible: true; */
+}
+
+.granary {
+    -fx-fill: BurlyWood;
+    -fx-arc-height: 100px;
+    -fx-arc-width: 100px;
+}
+
+.circle {
+    -fx-fill: BurlyWood;
+    -fx-arc-height: 100px;
+    -fx-arc-width: 100px;
+}
+
+.circle:hover {
+    -fx-fill: Khaki;
+}
