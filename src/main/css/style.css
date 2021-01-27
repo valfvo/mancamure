@@ -21,3 +21,8 @@
 .circle:hover {
     -fx-fill: Khaki;
 }
+
+.play-button {
+    -fx-font-size: 3em;
+}
+

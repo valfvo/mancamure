@@ -15,7 +15,9 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
@@ -35,26 +37,41 @@ public class App extends Application {
         return node;
     }
 
-    @Override
-    public void start(Stage stage) throws IOException {
+    public static Scene makeGameView() {
         GridPane boardGame = new GridPane();
         boardGame.getStyleClass().add("board-game");
-
+    
         boardGame.add(component(new Rectangle(100, 220), "granary"), 0, 0, 1, 2);
-
+    
         for (int row = 0; row < 2; ++row) {
             for (int column = 1; column < 7; ++column) {
                 boardGame.add(component(new Rectangle(100, 100), "circle"), column, row);
             }
         }
-
+    
         boardGame.add(component(new Rectangle(100, 220), "granary"), 7, 0, 1, 2);
-
+    
         Scene scene = new Scene(boardGame, 1280, 720);
+
+        return scene;
+    }
+
+    @Override
+    public void start(Stage stage) throws IOException {
+        Scene gameView = makeGameView();
+
+        Button play = new Button("Jouer");
+        play.setOnAction(value -> {
+            stage.setScene(gameView);
+        });
+        VBox list = new VBox(component(play, "play-button"));
+        Scene mainView = new Scene(list, 1280, 720);
+
         String cssFolder = System.getProperty("user.dir").replace('\\', '/')
                            + "/src/main/css/";
         String uri = "file:///" + cssFolder + "style.css";
-        scene.getStylesheets().add(uri);
+        gameView.getStylesheets().add(uri.replaceAll(" ", "%20"));
+        mainView.getStylesheets().add(uri.replaceAll(" ", "%20"));
 
         watchService = FileSystems.getDefault().newWatchService();
 
@@ -70,8 +87,8 @@ public class App extends Application {
                     for (WatchEvent<?> event : key.pollEvents()) {
                         Path changed = (Path) event.context();
                         if (changed.endsWith("style.css")) {
-                            scene.getStylesheets().clear();
-                            scene.getStylesheets().add(uri);
+                            gameView.getStylesheets().clear();
+                            gameView.getStylesheets().add(uri);
                         }
                     }
                     key.reset();
@@ -80,7 +97,7 @@ public class App extends Application {
         }, 500, 500);
 
         stage.setTitle("Mancamure");
-        stage.setScene(scene);
+        stage.setScene(mainView);
         stage.show();
     }
 
