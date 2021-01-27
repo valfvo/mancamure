@@ -56,11 +56,6 @@ public class App extends Application {
         String uri = "file:///" + cssFolder + "style.css";
         scene.getStylesheets().add(uri);
 
-        scene.addEventFilter(MouseEvent.MOUSE_CLICKED, (e) -> {
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(uri);
-        });
-
         watchService = FileSystems.getDefault().newWatchService();
 
         path = Paths.get(cssFolder);
@@ -70,8 +65,8 @@ public class App extends Application {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                try {
-                    WatchKey key = watchService.take();
+                WatchKey key = watchService.poll();
+                if (key != null) {
                     for (WatchEvent<?> event : key.pollEvents()) {
                         Path changed = (Path) event.context();
                         if (changed.endsWith("style.css")) {
@@ -79,7 +74,8 @@ public class App extends Application {
                             scene.getStylesheets().add(uri);
                         }
                     }
-                } catch (InterruptedException e) {}
+                    key.reset();
+                }
             }
         }, 500, 500);
 
