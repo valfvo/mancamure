@@ -20,9 +20,23 @@
 
 .circle:hover {
     -fx-fill: Khaki;
+    -fx-cursor: hand;
 }
 
 .play-button {
     -fx-font-size: 3em;
+    -fx-background-color: Sienna;
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px 10px 20px;
+    -fx-background-radius: 10px;
 }
 
+.play-button:hover {
+    -fx-background-color: brown;
+    -fx-cursor: hand;
+}
+
+VBox {
+    -fx-alignment: center;
+    -fx-background-color: beige;
+}

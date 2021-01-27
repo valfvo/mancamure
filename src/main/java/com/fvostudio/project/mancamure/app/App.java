@@ -14,10 +14,10 @@ import java.util.TimerTask;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
@@ -58,6 +58,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        System.setProperty("prism.lcdtext", "false");
+
         Scene gameView = makeGameView();
 
         Button play = new Button("Jouer");
@@ -87,8 +89,8 @@ public class App extends Application {
                     for (WatchEvent<?> event : key.pollEvents()) {
                         Path changed = (Path) event.context();
                         if (changed.endsWith("style.css")) {
-                            gameView.getStylesheets().clear();
-                            gameView.getStylesheets().add(uri);
+                            mainView.getStylesheets().clear();
+                            mainView.getStylesheets().add(uri);
                         }
                     }
                     key.reset();
