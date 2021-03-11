@@ -1,0 +1,46 @@
+package com.fvostudio.project.mancamure.gom;
+
+public class Vector3 {
+    private double x;
+    private double y;
+    private double z;
+
+    public Vector3() {
+        super();
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
+    }
+
+    public Vector3(double x, double y, double z) {
+        super();
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
+    }
+
+}
