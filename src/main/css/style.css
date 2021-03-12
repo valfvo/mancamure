@@ -40,3 +40,35 @@ VBox {
     -fx-alignment: center;
     -fx-background-color: beige;
 }
+
+.mode-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 15px;
+}
+
+.mode-panel:hover {
+    -fx-cursor: hand;
+}
+
+.mode-panel:hover .mode-selection {
+    -fx-background-color: brown;
+}
+
+
+.mode-selections {
+    -fx-background-color: beige;
+    -fx-hgap: 20px;
+    -fx-vgap: 20px;
+    -fx-alignment: center;
+}
+
+.mode-selection {
+    -fx-background-color: Sienna;
+    -fx-font-size: 3em;
+    -fx-padding: 15px;
+    -fx-background-radius: 15px;
+}
+
+.mode-selection > Text {
+    -fx-fill: white;
+}

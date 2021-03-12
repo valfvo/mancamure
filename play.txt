@@ -1,0 +1,112 @@
+// Dans un autre thread, callback apres hover d'une case
+callbackHoverCase()
+{
+    case = getCurrentCase();
+    if (case not in player.getPlayableElements())
+        return;
+
+    movement = game.getPossibleMovements(case)[0];
+    if (game.isLegal(movement))
+        // mettre en vert
+        currentMovement = movement
+    else
+        // mettre en rouge
+}
+
+game.start()
+game.startNextRound()  // change current player
+movement = player.play()
+isLegal = game.isLegal(movement)
+
+if (!isLegal)
+    // notify player
+    player.play()
+else
+    newState = movement.getResultingState()
+    game.getBoard().changeState(newState)
+    game.checkForGameEnd()  // startNextRound
+
+// ============================================================================
+
+// Echec : afficher les cases rouges et bleues
+callbackHoverPiece()
+{
+    piece = getCurrentPiece();
+    if (piece not in player.getPlayableElements())
+        return;
+
+    for (movement in game.getPossibleMovements(piece)) {
+        if (game.checkMovement(movement))
+            // bleu
+        else
+            // rouge
+    }
+}
+
+// ============================================================================
+
+// dans AIPlayer
+
+int depth = 10;
+Minmax minmax = new Minmax(game.getBoard(), depth);
+
+Player p = new AIPlayer(minmax);
+
+AIPlayer(Algorithm algorithm) {
+    this.algorithm = algorithm;
+}
+
+Movement play() {
+    algorithm.execute();
+    Movement bestMovement = (Movement) algorithm.getReturnValue();
+    return bestMovement;
+}
+
+// dans Minmax
+
+@Override
+void execute() {
+    state = board.getState();
+
+    for (State state : state.getNextStates())
+        basicMinmax(state, depth);
+    ...
+
+    returnValue = bestMovement;
+}
+
+// dans MinmaxAwale
+
+evaluate(BoardState boardState) {
+    AwaleBoardState state = (AwaleBoardState) boardState;
+}
+
+// dans AwaleBoardState
+public ArrayList<BoardState> getNextStates() {
+    nextStates = new ArrayList<BoardState>();
+
+    Game game = getBoard().getGame();
+    player = getCurrentPlayer();
+    elements = player.getPlayableElementsFrom(this);
+
+    for (OwnableElement element : elements) {
+        ArrayList<Movement> movements = game.getPossibleMovements(element);
+        for (Movement movement : movements) {
+            if (game.isLegalFrom(movement, this)) {
+                nextStates.add(movement.getResultingState());
+            }
+        }
+    }
+
+    return nextStates;
+}
+
+let rec string_of_formula = function
+  | Top -> "⊤"
+  | Bot -> "⊥"
+  | Var v -> v
+  | Not f -> "¬" ^ (string_of_formula f)
+  | Or (f1, f2) -> "(" ^ (string_of_formula f1) ^ "∧" ^ (string_of_formula f2) ^ ")"
+  | And (f1, f2) -> "(" ^ (string_of_formula f1) ^ "∨" ^ (string_of_formula f2) ^ ")"
+  | Imp (f1, f2) -> "(" ^ (string_of_formula f1) ^ "⇒" ^ (string_of_formula f2) ^ ")"
+  | Eq (f1, f2) -> "(" ^ (string_of_formula f1) ^ "⇔" ^ (string_of_formula f2) ^ ")";;
