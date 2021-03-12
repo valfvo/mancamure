@@ -6,17 +6,21 @@ public class Vector3 {
     private double z;
 
     public Vector3() {
-        super();
         x = 0.0;
         y = 0.0;
         z = 0.0;
     }
 
     public Vector3(double x, double y, double z) {
-        super();
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public Vector3(Vector3 other) {
+        this.x = other.x;
+        this.y = other.y;
+        this.z = other.z;
     }
 
     public double getX() {
@@ -42,5 +46,4 @@ public class Vector3 {
     public void setZ(double z) {
         this.z = z;
     }
-
 }

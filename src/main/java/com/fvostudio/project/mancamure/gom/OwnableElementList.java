@@ -3,46 +3,23 @@ package com.fvostudio.project.mancamure.gom;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-public class ElementList implements ListIterator<Element> {
+public class OwnableElementList implements ListIterator<OwnableElement> {
     private int currentIndex = 0;
-    private Element currentElement;
+    private OwnableElement currentElement;
 
-    public ElementList(Element element) {
+    public OwnableElementList(OwnableElement element) {
         if (element != null) {
-            currentElement = element.getFirstChild();
+            currentElement = element.getFirstOwnableChild();
         } else {
             currentElement = null;
         }
-    }
-
-    @Override
-    public boolean hasPrevious() {
-        return hasCurrent() && currentElement.getPreviousSibling() != null;
-    }
-
-    @Override
-    public Element previous() {
-        if (hasPrevious()) {
-            Element previousElement = currentElement.getPreviousSibling();
-            currentElement = previousElement;
-            --currentIndex;
-
-            return previousElement;
-        } else {
-            throw new NoSuchElementException();
-        }
-    }
-
-    @Override
-    public int previousIndex() {
-        return currentIndex() - 1;
     }
 
     public boolean hasCurrent() {
         return currentElement != null;
     }
 
-    public Element current() {
+    public OwnableElement current() {
         if (hasCurrent()) {
             return currentElement;
         } else {
@@ -56,13 +33,18 @@ public class ElementList implements ListIterator<Element> {
 
     @Override   
     public boolean hasNext() {
-        return hasCurrent() && currentElement.getNextSibling() != null;
+        return hasCurrent() && currentElement.getNextOwnableSibling() != null;
     }
 
     @Override
-    public Element next() {
+    public boolean hasPrevious() {
+        return hasCurrent() && currentElement.getPreviousOwnableSibling() != null;
+    }
+
+    @Override
+    public OwnableElement next() {
         if (hasNext()) {
-            Element nextElement = currentElement.getNextSibling();
+            OwnableElement nextElement = currentElement.getNextOwnableSibling();
             currentElement = nextElement;
             ++currentIndex;
 
@@ -77,7 +59,25 @@ public class ElementList implements ListIterator<Element> {
         return currentIndex() + 1;
     }
 
-    public Element get(int index) {
+    @Override
+    public OwnableElement previous() {
+        if (hasPrevious()) {
+            OwnableElement previousElement = currentElement.getPreviousOwnableSibling();
+            currentElement = previousElement;
+            --currentIndex;
+
+            return previousElement;
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    @Override
+    public int previousIndex() {
+        return currentIndex() - 1;
+    }
+
+    public OwnableElement get(int index) {
         while (index < currentIndex()) {
             previous();
         }
@@ -89,12 +89,12 @@ public class ElementList implements ListIterator<Element> {
     }
 
     @Override
-    public void set(Element e) {
+    public void set(OwnableElement e) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void add(Element e) {
+    public void add(OwnableElement e) {
         throw new UnsupportedOperationException();   
     }
 

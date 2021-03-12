@@ -24,7 +24,7 @@ public abstract class Owner {
     public void obtain(OwnableElement element) {
         if (!owns(element)) {
             ownedElements.add(element);
-            element.owners.add(this);
+            element.directOwners.add(this);
         }
     }
 
@@ -32,7 +32,7 @@ public abstract class Owner {
         assert(owns(element));
 
         ownedElements.remove(element);
-        element.owners.remove(this);
+        element.directOwners.remove(this);
     }
 
     public boolean owns(OwnableElement element) {

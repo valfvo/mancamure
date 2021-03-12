@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player extends Owner {
-    public static final long PLAYABLE = 0b1;
+    public static final long PLAYABLE_ELEMENT = 0b1;
+
     private String name;
     private Game game;
 
@@ -13,7 +14,7 @@ public abstract class Player extends Owner {
 
         List<OwnableElement> ownedElements = getOwnedElements();
         for (OwnableElement element : ownedElements) {
-            if (element.belongsTo(PLAYABLE)) {
+            if (element.belongsTo(PLAYABLE_ELEMENT)) {
                 playableElements.add(element);
             }
         }

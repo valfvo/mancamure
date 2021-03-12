@@ -11,5 +11,9 @@ public class Cell extends OwnableElement {
     public Cell(Vector3 coordinate) {
         super();
         this.coordinate = coordinate;
-    }   
+    }
+
+    public Vector3 getCoordinate() {
+        return new Vector3(coordinate);
+    }
 }

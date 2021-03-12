@@ -1,11 +1,11 @@
 package com.fvostudio.project.mancamure.gom;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class OwnableElement extends Element {
-    protected ArrayList<Owner> owners = new ArrayList<Owner>();
+    protected LinkedList<Owner> directOwners = new LinkedList<Owner>();
     private double ownValue = 0.0;
     private long categories = 0;
 
@@ -84,6 +84,10 @@ public class OwnableElement extends Element {
         return ownableChildCount;
     }
 
+    public OwnableElementList getOwnableChildren() {
+        return new OwnableElementList(this);
+    }
+
     public double getOwnValue() {
         return ownValue;
     }
@@ -107,8 +111,19 @@ public class OwnableElement extends Element {
         return categories;
     }
 
+    public List<Owner> getDirectOwners() {
+        return Collections.unmodifiableList(directOwners);
+    }
+
     public List<Owner> getOwners() {
-        return Collections.unmodifiableList(owners);
+        LinkedList<Owner> owners = new LinkedList<Owner>(directOwners);
+        OwnableElement parent = this;
+
+        while ((parent = parent.getOwnableParent()) != null) {
+            owners.addAll(0, parent.getDirectOwners());
+        }
+
+        return owners;
     }
 
     public void setOwnValue(double ownValue) {

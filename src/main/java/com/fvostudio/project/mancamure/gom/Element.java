@@ -1,5 +1,7 @@
 package com.fvostudio.project.mancamure.gom;
 
+import org.w3c.dom.DOMException;
+
 public class Element {
     private Element parent;
     private Element firstChild;
@@ -65,13 +67,30 @@ public class Element {
     }
 
     public Element insertBefore(Element element, Element child) {
-        assert(element != null);
+        if (element == null) {
+            throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
+                                   "The new child element to be inserted is null.");
+        }
+
+        if (element.isInclusiveAncestorOf(this)) {
+            throw new DOMException(DOMException.HIERARCHY_REQUEST_ERR,
+                                   "The new child element contains the parent.");
+        }
+
+        if (child != null && child.getParent() != this) {
+            throw new DOMException(
+                DOMException.NOT_FOUND_ERR,
+                "The element before which the new element is to be inserted"
+                + " is not a child of this element.");
+        }
 
         if ((child == element) ||
             (child != null && child.getPreviousSibling() == element)
         ) {
             return child;
         }
+
+        element.remove();
 
         if (child != null) {
             insertBeforeBase(element, child);
@@ -87,6 +106,15 @@ public class Element {
     }
 
     public Element removeChild(Element child) {
+        if (child == null) {
+            throw new DOMException(DOMException.NOT_FOUND_ERR,
+                                   "The child element to be removed is null.");
+        } else if (child.getParent() != this) {
+            throw new DOMException(
+                DOMException.NOT_FOUND_ERR,
+                "The element to be removed is not a child of this element.");
+        }
+
         removeChildBase(child);
 
         return child;
@@ -96,6 +124,25 @@ public class Element {
         if (getParent() != null) {
             getParent().removeChild(this);
         }
+    }
+
+    private boolean isAncestorOf(Element element) {
+        assert(element != null);
+
+        Element parent = element;
+        while ((parent = parent.getParent()) != null) {
+            if (parent == this) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isInclusiveAncestorOf(Element element) {
+        assert(element != null);
+
+        return this == element || isAncestorOf(element);
     }
 
     private void insertBeforeBase(Element element, Element child) {
