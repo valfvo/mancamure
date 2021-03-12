@@ -1,28 +1,13 @@
 package com.fvostudio.project.mancamure.gom;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public abstract class BoardState {
-    private Board board;
-    private Player currentPlayer;
+public interface BoardState {
+    Board getBoard();
 
-    public Board getBoard() {
-        return board;
-    }
+    Player getCurrentPlayer();
 
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
+    List<BoardState> getStates();
 
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    public void setCurrentPlayer(Player player) {
-        currentPlayer = player;
-    }
-
-    public abstract ArrayList<BoardState> getStates();
-
-    public abstract ArrayList<BoardState> getPreviousStates();
+    List<BoardState> getPreviousStates();
 }

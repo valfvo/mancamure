@@ -14,21 +14,20 @@ public abstract class Minmax implements Algorithm {
         return null;
     }
 
-    
     public int getDepth() {
         return depth;
     }
 
-    public void setDepth(int newDepth) {
-        this.depth = newDepth;
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
-    public boolean getIsAbPruningEnabled() {
+    public boolean isAbPruningEnabled() {
         return isAbPruningEnabled;
     }
 
     public void setIsAbPruningEnabled(boolean isAbPruningEnabled) {
-        this.isAbPruningEnabled=isAbPruningEnabled;
+        this.isAbPruningEnabled = isAbPruningEnabled;
     }
 
     private double basicMinmax(BoardState state) {

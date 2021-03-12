@@ -8,6 +8,7 @@ public abstract class Game {
     private Board board;
     private Player currentPlayer;
     private ArrayList<Player> players = new ArrayList<Player>();
+    private boolean hasStarted = false;
 
     public Board getBoard() {
         return board;
@@ -17,28 +18,59 @@ public abstract class Game {
         return currentPlayer;
     }
 
-    public  List<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
+    public boolean hasStarted() {
+        return hasStarted;
     }
 
-    public void setCurrentPlayer(Player player) {
-        currentPlayer = player;
+    public void setBoard(Board board) {
+        if (hasStarted()) {
+            throw new IllegalStateException("Can not set a board for a game already started.");
+        }
+        if (board.getGame() != null) {
+            throw new IllegalStateException("Can not set a board belonging to another game.");
+        }
+
+        this.board = board;
+        board.setGame(this);
     }
 
     public void add(Player player) {
+        if (player.getGame() == this) {
+            throw new IllegalArgumentException("The player is already playing the game.");
+        }
+
         players.add(player);
+        player.setGame(this);
     }
 
     public void remove(Player player) {
+        if (player.getGame() != this) {
+            throw new IllegalArgumentException("The player is not playing the game.");
+        }
+
+        player.loseBoardElements();
+
         players.remove(player);
+        player.setGame(null);
     }
 
-    public void start() { //peut-être a mettre abstract
-        
+    public void start() { 
+        if (hasStarted()) {
+            throw new IllegalStateException("Can not start a game already started.");
+        }
+        if (players.size() == 0) {
+            throw new IllegalStateException("Can not start a game without players.");
+        }
+        if (getBoard() == null) {
+            throw new IllegalStateException("Can not start a game without board.");
+        }
+
+        hasStarted = true;
+        startNextRound();
     }
 
     public void startNextRound() {

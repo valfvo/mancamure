@@ -9,18 +9,6 @@ public abstract class Player extends Owner {
     private String name;
     private Game game;
 
-    public List<OwnableElement> getPlayableElements() {
-        List<OwnableElement> playableElements = new ArrayList<OwnableElement>();
-
-        List<OwnableElement> ownedElements = getOwnedElements();
-        for (OwnableElement element : ownedElements) {
-            if (element.belongsTo(PLAYABLE_ELEMENT)) {
-                playableElements.add(element);
-            }
-        }
-        return playableElements;
-    }
-
     public String getName() {
         return name;
     }
@@ -33,8 +21,40 @@ public abstract class Player extends Owner {
         return game;
     }
 
-    public void setGame(Game game) {
+    protected void setGame(Game game) {
         this.game = game;
+    }
+
+    public List<OwnableElement> getPlayableElements() {
+        List<OwnableElement> playableElements = new ArrayList<OwnableElement>();
+
+        List<OwnableElement> ownedElements = getOwnedElements();
+        for (OwnableElement element : ownedElements) {
+            if (element.belongsTo(PLAYABLE_ELEMENT)) {
+                playableElements.add(element);
+            }
+        }
+
+        return playableElements;
+    }
+
+    public void loseBoardElements() {
+        if (getGame() != null) {
+            return;
+        }
+
+        Board board = getGame().getBoard();
+        if (board == null) {
+            return;
+        }
+
+        for (OwnableElement owned : getOwnedElements()) {
+            for (Owner owner : owned.getOwners()) {
+                if (owner == board) {
+                    lose(owned);
+                }
+            }
+        }
     }
 
     public abstract Movement play();

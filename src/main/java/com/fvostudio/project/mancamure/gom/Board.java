@@ -7,7 +7,7 @@ public abstract class Board extends Owner {
         return game;
     }
 
-    public void setGame(Game game) {
+    protected void setGame(Game game) {
         this.game = game;
     }
 
