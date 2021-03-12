@@ -84,8 +84,8 @@ public class Element {
                 + " is not a child of this element.");
         }
 
-        if ((child == element) ||
-            (child != null && child.getPreviousSibling() == element)
+        if ((child == element)
+            || (child != null && child.getPreviousSibling() == element)
         ) {
             return child;
         }
