@@ -2,6 +2,7 @@ package com.fvostudio.project.mancamure.gom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Player extends Owner {
     public static final long PLAYABLE_ELEMENT = 0b1;
@@ -21,7 +22,8 @@ public abstract class Player extends Owner {
         return game;
     }
 
-    protected void setGame(Game game) {
+    public void setGame(Game.GameAuth auth, Game game) {
+        Objects.requireNonNull(auth);
         this.game = game;
     }
 

@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Game {
+    public static final class GameAuth { private GameAuth() {} }
+    private static final GameAuth auth = new GameAuth();
+
     private Board board;
     private Player currentPlayer;
     private ArrayList<Player> players = new ArrayList<Player>();
@@ -35,7 +38,7 @@ public abstract class Game {
         }
 
         this.board = board;
-        board.setGame(this);
+        board.setGame(auth, this);
     }
 
     public void add(Player player) {
@@ -44,7 +47,7 @@ public abstract class Game {
         }
 
         players.add(player);
-        player.setGame(this);
+        player.setGame(auth, this);
     }
 
     public void remove(Player player) {
@@ -55,7 +58,7 @@ public abstract class Game {
         player.loseBoardElements();
 
         players.remove(player);
-        player.setGame(null);
+        player.setGame(auth, null);
     }
 
     public void start() { 

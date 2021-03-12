@@ -1,5 +1,7 @@
 package com.fvostudio.project.mancamure.gom;
 
+import java.util.Objects;
+
 public abstract class Board extends Owner {
     private Game game;
 
@@ -7,7 +9,8 @@ public abstract class Board extends Owner {
         return game;
     }
 
-    protected void setGame(Game game) {
+    public void setGame(Game.GameAuth auth, Game game) {
+        Objects.requireNonNull(auth);
         this.game = game;
     }
 
