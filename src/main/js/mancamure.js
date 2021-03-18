@@ -6,7 +6,7 @@ let i = 0;
 
 for (const cell of cells) {
     cell.onclick = (e) => {
-        // test.ok("javafx NUL NUL NUL");
+        test.ok("javafx");
         // test.ok2(e);
     };
     cell.onmouseover = function(e) {

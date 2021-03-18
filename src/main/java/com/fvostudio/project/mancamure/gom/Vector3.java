@@ -46,4 +46,17 @@ public class Vector3 {
     public void setZ(double z) {
         this.z = z;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof Vector3)) {
+            return false;
+        }
+
+        Vector3 other = (Vector3) o;
+
+        return getX() == other.getX()
+            && getY() == other.getY()
+            && getZ() == other.getZ();
+    }
 }

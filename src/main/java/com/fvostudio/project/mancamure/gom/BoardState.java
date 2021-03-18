@@ -7,7 +7,9 @@ public interface BoardState {
 
     Player getCurrentPlayer();
 
-    List<BoardState> getStates();
+    Movement getLastMovement();
 
-    List<BoardState> getPreviousStates();
+    List<BoardState> getNextStates();
+
+    BoardState getPreviousState();
 }

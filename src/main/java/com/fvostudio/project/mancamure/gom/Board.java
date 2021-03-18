@@ -9,7 +9,7 @@ public abstract class Board extends Owner {
         return game;
     }
 
-    public void setGame(Game.GameAuth auth, Game game) {
+    public void setGame(Game.Auth auth, Game game) {
         Objects.requireNonNull(auth);
         this.game = game;
     }

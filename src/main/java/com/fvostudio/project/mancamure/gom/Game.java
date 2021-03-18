@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Game {
-    public static final class GameAuth { private GameAuth() {} }
-    private static final GameAuth auth = new GameAuth();
+    public static final class Auth { private Auth() {} }
+    private static final Auth auth = new Auth();
 
     private Board board;
     private Player currentPlayer;
