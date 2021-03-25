@@ -1,4 +1,4 @@
-package com.fvostudio.project.mancamure.gom;
+package com.fvostudio.project.mancamure.gom.util;
 
 public class Vector3 {
     private double x;

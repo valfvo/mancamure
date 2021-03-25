@@ -2,6 +2,8 @@ package com.fvostudio.project.mancamure.gom;
 
 import java.util.Objects;
 
+import com.fvostudio.project.mancamure.gom.util.Vector3;
+
 public abstract class Board extends Owner {
     private Game game;
 

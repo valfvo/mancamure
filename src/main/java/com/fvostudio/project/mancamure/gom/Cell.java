@@ -1,5 +1,7 @@
 package com.fvostudio.project.mancamure.gom;
 
+import com.fvostudio.project.mancamure.gom.util.Vector3;
+
 public class Cell extends OwnableElement {
     private Vector3 coordinate;
 

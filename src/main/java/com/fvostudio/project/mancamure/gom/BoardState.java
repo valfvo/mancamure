@@ -12,4 +12,6 @@ public interface BoardState {
     List<BoardState> getNextStates();
 
     BoardState getPreviousState();
+
+    boolean isFinalState();
 }

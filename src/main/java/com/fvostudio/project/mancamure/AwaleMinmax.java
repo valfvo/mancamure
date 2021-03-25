@@ -7,7 +7,7 @@ import com.fvostudio.project.mancamure.gom.Board;
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.Minmax;
 import com.fvostudio.project.mancamure.gom.Player;
-import com.fvostudio.project.mancamure.gom.Vector3;
+import com.fvostudio.project.mancamure.gom.util.Vector3;
 
 public class AwaleMinmax extends Minmax {
     private static final double w1 = 0.198649;

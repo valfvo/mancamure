@@ -87,7 +87,9 @@ public abstract class Game {
         currentPlayer.play();
     }
 
-    public abstract ArrayList<Movement> getPossibleMovement(OwnableElement element);
+    public abstract ArrayList<Movement> getPossibleMovements(OwnableElement element);
+
+    public abstract ArrayList<Movement> getPossibleMovementsFrom(Object obj);
 
     public abstract boolean isLegal(Movement movement);
 

@@ -10,6 +10,19 @@ import com.fvostudio.project.mancamure.gom.Player;
 
 public class AwaleBoardState implements BoardState {
 
+    private ArrayList<Integer> pits = new ArrayList<>();
+    private ArrayList<Integer> banks = new ArrayList<>();
+    
+    public AwaleBoardState(ArrayList<Integer> pits, ArrayList<Integer> banks) {
+        for (Integer pit : pits) {
+            this.pits.add(pit);
+        }
+
+        for (Integer bank : banks) {
+            this.banks.add(bank);
+        }
+    }
+    
     @Override
     public Board getBoard() {
         throw new UnsupportedOperationException();
@@ -32,6 +45,11 @@ public class AwaleBoardState implements BoardState {
 
     @Override
     public BoardState getPreviousState() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isFinalState() {
         throw new UnsupportedOperationException();
     }
 
