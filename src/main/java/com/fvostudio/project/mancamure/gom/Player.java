@@ -61,5 +61,7 @@ public abstract class Player extends Owner {
 
     public abstract Movement play();
 
-    public abstract Object getPlayableElementsFrom(BoardState state);
+    public abstract Object getPlayableObject(OwnableElement element);
+
+    public abstract Object getPlayableObjects(BoardState state);
 }

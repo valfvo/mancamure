@@ -3,19 +3,19 @@ package com.fvostudio.project.mancamure.gom;
 import com.fvostudio.project.mancamure.gom.util.Vector3;
 
 public class Cell extends OwnableElement {
-    private Vector3 coordinate;
+    private Vector3 position;
 
     public Cell() {
         super();
-        coordinate = new Vector3();
+        position = new Vector3();
     }
 
-    public Cell(Vector3 coordinate) {
+    public Cell(Vector3 position) {
         super();
-        this.coordinate = coordinate;
+        this.position = position;
     }
 
-    public Vector3 getCoordinate() {
-        return new Vector3(coordinate);
+    public Vector3 getPosition() {
+        return new Vector3(position);
     }
 }

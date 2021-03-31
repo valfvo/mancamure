@@ -1,13 +1,11 @@
 package com.fvostudio.project.mancamure;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fvostudio.project.mancamure.gom.Board;
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.Minmax;
 import com.fvostudio.project.mancamure.gom.Player;
-import com.fvostudio.project.mancamure.gom.util.Vector3;
 
 public class AwaleMinmax extends Minmax {
     private static final double w1 = 0.198649;
@@ -33,21 +31,13 @@ public class AwaleMinmax extends Minmax {
     @Override
     public double evaluate(BoardState boardState) {
         AwaleBoardState state = (AwaleBoardState) boardState;
-        boolean isCurrentPlayerAnOpponent = state.getCurrentPlayer() != getPlayer();
-
-        ArrayList<Integer> pits = state.getPits();
-        int playerPitCount = pits.size() / 2;
-
-        double h1 = isCurrentPlayerAnOpponent
-            ? pits.get(playerPitCount - 1)
-            : pits.get(playerPitCount);
+        List<Integer> playerPits = state.getPlayerPits(getPlayer());
+    
+        // H1: keep as many seeds as possible in the leftmost pit of the player
+        double h1 = playerPits.get(0);
 
         int playerSeedCount = 0;
         int nonEmptyPlayerPitCount = 0;
-    
-        List<Integer> playerPits = isCurrentPlayerAnOpponent
-            ? pits.subList(0, playerPitCount)
-            : pits.subList(playerPitCount, pits.size());
 
         for (int pit : playerPits) {
             if (pit > 0) {
@@ -56,30 +46,26 @@ public class AwaleMinmax extends Minmax {
             }
         }
 
+        // H2: keep as many seeds as possible on the player's side
         double h2 = playerSeedCount;
+        // H3: have as many moves as possible
         double h3 = nonEmptyPlayerPitCount;
 
-        ArrayList<Integer> banks = state.getBanks();
-        double h4, h6;  // playerBank, opponentBank
-        if (isCurrentPlayerAnOpponent) {
-            h4 = banks.get(0);
-            h6 = banks.get(1);
-        } else {
-            h4 = banks.get(1);
-            h6 = banks.get(0);
-        }
+        // H4: maximize the amount of seeds in the player's bank
+        double h4 = state.getPlayerBank(getPlayer());
+        // H6: minimize the amount of seeds in the opponent's bank
+        double h6 = state.getOpponentBank(getPlayer());
 
+        // H5: move the seeds from the closest pit to the opponent's side
         double h5 = 0.0;
 
         if (lastStateWherePlayerPlayed != null) {
-            Vector3 rightmostNonEmptyPlayerPitPosition = null;
+            int rightmostNonEmptyPlayerPitPosition = 0;
+            List<Integer> oldPits = lastStateWherePlayerPlayed.getPlayerPits();
 
-            ArrayList<Integer> oldPits = lastStateWherePlayerPlayed.getPits();
-
-            for (int i = oldPits.size(); i >= playerPitCount; --i) {
+            for (int i = oldPits.size() - 1; i >= 0; --i) {
                 if (oldPits.get(i) > 0) {
-                    int x = i - playerPitCount;
-                    rightmostNonEmptyPlayerPitPosition = new Vector3(x, 1, 0);
+                    rightmostNonEmptyPlayerPitPosition = i;
                     break;
                 }
             }
@@ -87,9 +73,11 @@ public class AwaleMinmax extends Minmax {
             AwaleMovement lastPlayerMove =
                 (AwaleMovement) lastStateWherePlayerPlayed.getLastMovement();
 
-            boolean lastMoveWasRightmost = lastPlayerMove
-                .getStartingPitPosition()
-                .equals(rightmostNonEmptyPlayerPitPosition);
+            int lastMoveIndex = 
+                lastPlayerMove.getStartingPitIndex() % oldPits.size();
+
+            boolean lastMoveWasRightmost = 
+                lastMoveIndex == rightmostNonEmptyPlayerPitPosition;
 
             h5 = lastMoveWasRightmost ? 1.0 : 0.0;
         }

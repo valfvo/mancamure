@@ -96,4 +96,6 @@ public abstract class Game {
     public abstract boolean isLegalFrom(Movement movement, BoardState state);
 
     public abstract void checkForGameEnd();
+
+    public abstract boolean isFinalStateFrom(BoardState state);
 }

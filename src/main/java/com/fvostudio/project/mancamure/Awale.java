@@ -1,43 +1,55 @@
 package com.fvostudio.project.mancamure;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.Game;
 import com.fvostudio.project.mancamure.gom.Movement;
 import com.fvostudio.project.mancamure.gom.OwnableElement;
 import com.fvostudio.project.mancamure.gom.util.Pair;
-import com.fvostudio.project.mancamure.gom.util.Vector3;
 
 public class Awale extends Game {
     @Override
     public ArrayList<Movement> getPossibleMovements(OwnableElement element) {
-        return null;
+        // element.belongsTo(PLAYABLE_ELEMENT)
+        // AwaleBoardState state = (AwaleBoardState) getBoard().getState();
+
+        // vector3 = element.getPosition
+        // integer = element.getPit
+
+        // class Game2 extends Game implements GameFrom { ... }
+
+        // Pair<Integer, Vector3> pair = null;
+
+        // return getPossibleMovementsFrom(pair);
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * @param obj integer that represents the number of seeds in the pit + its position
+     * @param obj pair<Integer, Vector3> that represents the number of seeds in
+     *  the pit + its position
      */
     @Override
     public ArrayList<Movement> getPossibleMovementsFrom(Object obj) {
         if (!(obj instanceof Pair<?, ?>)) {
             throw new IllegalArgumentException(
-                "The object is not a Pair<Integer, Vector3>.");
+                "The object is not a Pair<Integer, Integer>.");
         }
 
         Pair<?, ?> pair = (Pair<?, ?>) obj;
 
-        if (!(pair.first instanceof Integer) || !(pair.second instanceof Vector3)) {
+        if (!(pair.first instanceof Integer) || !(pair.second instanceof Integer)) {
             throw new IllegalArgumentException(
-                "The object is not a Pair<Integer, Vector3>.");
+                "The object is not a Pair<Integer, Integer>.");
         }
 
         int pit = (Integer) pair.first;
-        Vector3 position = (Vector3) pair.second;
+        int index = (Integer) pair.second;
 
         ArrayList<Movement> possibleMovements = new ArrayList<>();
         if (pit > 0) {
-            possibleMovements.add(new AwaleMovement(pit, position));
+            possibleMovements.add(new AwaleMovement(index));
         }
 
         return possibleMovements;
@@ -45,74 +57,84 @@ public class Awale extends Game {
 
     @Override
     public boolean isLegal(Movement movement) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean isLegalFrom(Movement movement, BoardState state) {
         assert(movement instanceof AwaleMovement && state instanceof AwaleBoardState);
-        AwaleBoardState resultingState = (AwaleBoardState) movement.getResultingState(state);
 
-        if (resultingState.isFinalState()) {
+        if (state.isFinalState()) {
             return false;
         }
 
-        int opponentSeedCount = 0;
-        ArrayList<Integer> pits = resultingState.getPits();
+        AwaleBoardState resultingState =
+            (AwaleBoardState) movement.getResultingState(state);
 
-        int start, end;
-        if (state.getCurrentPlayer() == getCurrentPlayer()) {
-            start = 0;
-            end = pits.size() / 2;
-        } else {
-            start = pits.size() / 2;
-            end = pits.size();
+        List<Integer> resultingOpponentPits =
+            resultingState.getOpponentPits(state.getCurrentPlayer());
+
+        // can't starve the opponent
+        for (int pit : resultingOpponentPits) {
+            if (pit > 0) {
+                return true;
+            }
         }
 
-        for (int i = start; opponentSeedCount == 0 && i < end; ++i) {
-            opponentSeedCount += pits.get(i);
-        }
-
-        return opponentSeedCount != 0;
+        return false;
     }
 
     @Override
     public void checkForGameEnd() {
+        throw new UnsupportedOperationException();
     }
 
-    public static boolean isFinalState(AwaleBoardState state) {
-        // Au moins 25 graines de capturées
+    @Override
+    public boolean isFinalStateFrom(BoardState boardState) {
+        assert(boardState instanceof AwaleBoardState);
+        AwaleBoardState state = (AwaleBoardState) boardState;
+
+        // at least 25 seeds captured
         ArrayList<Integer> banks = state.getBanks();
         if (banks.get(0) >= 25 || banks.get(1) >= 25) {
             return true;
         }
 
-        // <= 3 graines sur la plateau
-        ArrayList<Integer> pits = state.getPits();
-        int pitCount = pits.size();
-        int playerPitCount = pitCount / 2;
+        // 3 seeds or less on the board
+        // ArrayList<Integer> pits = state.getPits();
+        List<Integer> playerPits = state.getPlayerPits();
+        List<Integer> opponentPits = state.getOpponentPits();
+        // int pitCount = pits.size();
+        // int playerPitCount = pitCount / 2;
 
         int playerSeedCount = 0;
         int opponentSeedCount = 0;
 
-        for (int i = 0; i < playerPitCount; ++i) {
-            opponentSeedCount += pits.get(i);
+        for (int pit : opponentPits) {
+            opponentSeedCount += pit;
+            if (opponentSeedCount > 3) {
+                break;
+            }
         }
 
-        for (int i = playerPitCount; i < pitCount; ++i) {
-            playerSeedCount += pits.get(i);
+        for (int pit : playerPits) {
+            playerSeedCount += pit;
+            if (playerSeedCount > 3) {
+                break;
+            }
         }
 
-        if (playerSeedCount + opponentSeedCount <= 3) {
+        if (playerSeedCount == 0 || playerSeedCount + opponentSeedCount <= 3) {
             return true;
         }
 
-        // Impossible de nourir un adversaire affamé
+        // a starved opponent can not be fed
         if (opponentSeedCount <= 0) {
             boolean isOpponentFeedable = false;
+            int maxIndex = playerPits.size() - 1;
 
-            for (int i = playerPitCount; !isOpponentFeedable && i < pitCount; ++i) {
-                isOpponentFeedable = pits.get(i) >= (pitCount - i);
+            for (int i = maxIndex; !isOpponentFeedable && i >= 0; --i) {
+                isOpponentFeedable = playerPits.get(i) > maxIndex - i;
             }
 
             return isOpponentFeedable;
