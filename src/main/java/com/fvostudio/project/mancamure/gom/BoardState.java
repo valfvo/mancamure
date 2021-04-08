@@ -5,8 +5,6 @@ import java.util.List;
 public interface BoardState {
     Board getBoard();
 
-    Game getGame();
-
     Player getCurrentPlayer();
 
     Movement getLastMovement();

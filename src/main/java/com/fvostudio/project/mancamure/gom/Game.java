@@ -8,17 +8,26 @@ public abstract class Game {
     public static final class Auth { private Auth() {} }
     private static final Auth auth = new Auth();
 
+    public static int i = 0;
+
     private Board board;
-    private Player currentPlayer;
-    private ArrayList<Player> players = new ArrayList<Player>();
-    private boolean hasStarted = false;
+    private Movement lastMovement;
+
+    protected ArrayList<Player> players = new ArrayList<Player>();
+    protected int currentPlayerIndex = -1;
+    protected boolean hasStarted = false;
+    protected boolean isFinished = true;
 
     public Board getBoard() {
         return board;
     }
 
     public Player getCurrentPlayer() {
-        return currentPlayer;
+        if (currentPlayerIndex >= 0) {
+            return players.get(currentPlayerIndex);
+        } else {
+            return null;
+        }
     }
 
     public List<Player> getPlayers() {
@@ -73,18 +82,47 @@ public abstract class Game {
         }
 
         hasStarted = true;
-        startNextRound();
+        isFinished = false;
+        currentPlayerIndex = -1;
+
+        System.out.println("deb");
+
+        while (!isFinished) {
+            ++i;
+            if (i > 1000) {
+                break;
+            }
+            initializeNextRound();
+            startNextRound();
+            // break;
+            System.out.println(i);
+            System.out.println(getBoard().getState().toString());
+            checkForGameEnd();
+        }
+
+        System.out.println("fin");
+    }
+
+    public void initializeNextRound() {
+        if (currentPlayerIndex == players.size() - 1) {
+            currentPlayerIndex = 0;
+        } else {
+            ++currentPlayerIndex;
+        }
     }
 
     public void startNextRound() {
-        int indexCurrentPlayer = players.indexOf(currentPlayer);
-        if (indexCurrentPlayer == players.size() - 1)
-            indexCurrentPlayer = 0;
-        else
-            ++indexCurrentPlayer;
+        Movement movement = null;
+        do {
+            movement = getCurrentPlayer().play();
+        } while (!isLegal(movement));
 
-        currentPlayer = players.get(indexCurrentPlayer);
-        currentPlayer.play();
+        movement.apply(getBoard());
+        lastMovement = movement;
+    }
+
+    public Movement getLastMovement() {
+        return lastMovement;
     }
 
     public abstract ArrayList<Movement> getPossibleMovements(OwnableElement element);
@@ -97,5 +135,5 @@ public abstract class Game {
 
     public abstract void checkForGameEnd();
 
-    public abstract boolean isFinalStateFrom(BoardState state);
+    public abstract boolean isFinalState(BoardState state);
 }

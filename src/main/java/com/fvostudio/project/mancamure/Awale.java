@@ -4,12 +4,61 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fvostudio.project.mancamure.gom.BoardState;
+import com.fvostudio.project.mancamure.gom.Cell;
 import com.fvostudio.project.mancamure.gom.Game;
 import com.fvostudio.project.mancamure.gom.Movement;
 import com.fvostudio.project.mancamure.gom.OwnableElement;
+import com.fvostudio.project.mancamure.gom.Player;
 import com.fvostudio.project.mancamure.gom.util.Pair;
+import com.fvostudio.project.mancamure.gom.util.Vector3;
 
-public class Awale extends Game {
+public class Awale extends Game implements Runnable {
+    List<String> args; 
+
+    public Awale(List<String> args) {
+        this.args = args;
+    }
+
+    @Override
+    public void run() {
+        AwaleBoard board = new AwaleBoard();
+        setBoard(board);
+
+        boolean isAbPruningEnabled = Boolean.valueOf(args.get(2));
+
+        AIPlayer playerOne = new AIPlayer();
+        add(playerOne);
+        int depthOne = Integer.valueOf(args.get(0));
+        AwaleMinmax minmaxOne = new AwaleMinmax(board, depthOne, playerOne);
+        minmaxOne.setAbPruningEnabled(isAbPruningEnabled);
+        playerOne.setAlgorithm(minmaxOne);
+
+        AIPlayer playerTwo = new AIPlayer();
+        add(playerTwo);
+        int depthTwo = Integer.valueOf(args.get(1));
+        AwaleMinmax minmaxTwo = new AwaleMinmax(board, depthTwo, playerTwo);
+        minmaxTwo.setAbPruningEnabled(isAbPruningEnabled);
+        playerTwo.setAlgorithm(minmaxTwo);
+
+        start();
+    }
+
+    @Override
+    public void add(Player player) {
+        super.add(player);
+
+        AwaleBoard currentBoard = (AwaleBoard) getBoard();
+        int columnCount = currentBoard.getColumnCount();
+        int y = players.size() == 1 ? 0 : 1;  // upper or lower
+
+        for (int x = 0; x < columnCount; ++x) {
+            Cell cell = currentBoard.getCell(new Vector3(x, y, 0));
+            player.obtain(cell);
+        }
+
+        player.obtain(currentBoard.getBanks().get(y));
+    }
+
     @Override
     public ArrayList<Movement> getPossibleMovements(OwnableElement element) {
         // element.belongsTo(PLAYABLE_ELEMENT)
@@ -57,7 +106,7 @@ public class Awale extends Game {
 
     @Override
     public boolean isLegal(Movement movement) {
-        throw new UnsupportedOperationException();
+        return isLegalFrom(movement, getBoard().getState());
     }
 
     @Override
@@ -86,16 +135,16 @@ public class Awale extends Game {
 
     @Override
     public void checkForGameEnd() {
-        throw new UnsupportedOperationException();
+        isFinished = getBoard().getState().isFinalState();
     }
 
     @Override
-    public boolean isFinalStateFrom(BoardState boardState) {
+    public boolean isFinalState(BoardState boardState) {
         assert(boardState instanceof AwaleBoardState);
         AwaleBoardState state = (AwaleBoardState) boardState;
 
         // at least 25 seeds captured
-        ArrayList<Integer> banks = state.getBanks();
+        List<Integer> banks = state.getBanks();
         if (banks.get(0) >= 25 || banks.get(1) >= 25) {
             return true;
         }
@@ -137,7 +186,7 @@ public class Awale extends Game {
                 isOpponentFeedable = playerPits.get(i) > maxIndex - i;
             }
 
-            return isOpponentFeedable;
+            return !isOpponentFeedable;
         }
 
         return false;

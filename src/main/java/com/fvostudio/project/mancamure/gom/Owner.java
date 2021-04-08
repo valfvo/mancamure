@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class Owner {
-    private ArrayList<OwnableElement> ownedElements = new ArrayList<OwnableElement>();
+    protected ArrayList<OwnableElement> ownedElements = new ArrayList<OwnableElement>();
 
     public double getWealth() {
         double wealth = 0.0;

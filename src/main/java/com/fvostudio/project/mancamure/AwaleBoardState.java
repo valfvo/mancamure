@@ -4,58 +4,101 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.fvostudio.project.mancamure.gom.Board;
 import com.fvostudio.project.mancamure.gom.BoardState;
-import com.fvostudio.project.mancamure.gom.Game;
 import com.fvostudio.project.mancamure.gom.Movement;
 import com.fvostudio.project.mancamure.gom.Player;
+import com.fvostudio.project.mancamure.gom.util.Pair;
 import com.fvostudio.project.mancamure.gom.util.Vector3;
 
 public class AwaleBoardState implements BoardState {
-    Board board;
-    private ArrayList<Integer> pits = new ArrayList<>();
-    private ArrayList<Integer> banks = new ArrayList<>();
-    boolean isFinalState;
+    private boolean isFinalState;
+    private AwaleBoard board;
+    private AwaleMovement lastMovement;
 
-    public AwaleBoardState(Board refBoard,
-                           ArrayList<Integer> pits, ArrayList<Integer> banks
+    private Player upperPlayer;
+    private Player currentPlayer;
+    private ArrayList<Integer> pits;
+    private ArrayList<Integer> banks;
+
+    public AwaleBoardState(
+        AwaleBoard board,
+        ArrayList<Integer> pits,
+        ArrayList<Integer> banks
     ) {
-        this.board = refBoard;
+        this.board = board;
+        this.lastMovement = (AwaleMovement) board.getGame().getLastMovement();
+        this.upperPlayer = board.getGame().getPlayers().get(0);
+        this.currentPlayer = board.getGame().getCurrentPlayer();
+        this.pits = pits;
+        this.banks = banks;
+        this.isFinalState = board.getGame().isFinalState(this);
+    }
 
-        for (Integer pit : pits) {
-            this.pits.add(pit);
-        }
+    public AwaleBoardState(
+        AwaleBoardState state,
+        AwaleMovement lastMovement,
+        Player currentPlayer,
+        ArrayList<Integer> pits,
+        ArrayList<Integer> banks
+    ) {
+        this.board = state.getBoard();
+        this.lastMovement = lastMovement;
+        this.upperPlayer = state.getUpperPlayer();
+        this.currentPlayer = currentPlayer;
+        this.pits = pits;
+        this.banks = banks;
+        this.isFinalState = board.getGame().isFinalState(this);
+    }
 
-        for (Integer bank : banks) {
-            this.banks.add(bank);
-        }
-
-        this.isFinalState = board.getGame().isFinalStateFrom(this);
+    public void reset(
+        AwaleBoardState state,
+        AwaleMovement lastMovement,
+        Player currentPlayer,
+        ArrayList<Integer> pits,
+        ArrayList<Integer> banks
+    ) {
+        this.board = state.getBoard();
+        this.lastMovement = lastMovement;
+        this.upperPlayer = state.getUpperPlayer();
+        this.currentPlayer = currentPlayer;
+        this.pits = pits;
+        this.banks = banks;
+        this.isFinalState = board.getGame().isFinalState(this);
     }
 
     @Override
-    public Board getBoard() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Game getGame() {
-        throw new UnsupportedOperationException();
+    public AwaleBoard getBoard() {
+        return board;
     }
 
     @Override
     public Player getCurrentPlayer() {
-        throw new UnsupportedOperationException();
+        return currentPlayer;
     }
 
     @Override
-    public Movement getLastMovement() {
-        throw new UnsupportedOperationException();
+    public AwaleMovement getLastMovement() {
+        return lastMovement;
     }
 
     @Override
     public List<BoardState> getNextStates() {
-        throw new UnsupportedOperationException();
+        List<BoardState> nextStates = new ArrayList<>();
+
+        Awale game = (Awale) getBoard().getGame();
+        AwalePlayer player = (AwalePlayer) getCurrentPlayer();
+        ArrayList<Pair<Integer, Integer>> objects = player.getPlayableObjects(this);
+
+        for (Pair<Integer, Integer> object : objects) {
+            ArrayList<Movement> movements = game.getPossibleMovementsFrom(object);
+            for (Movement movement : movements) {
+                if (game.isLegalFrom(movement, this)) {
+                    nextStates.add(movement.getResultingState(this));
+                }
+            }
+        }
+
+        return nextStates;
     }
 
     @Override
@@ -69,23 +112,39 @@ public class AwaleBoardState implements BoardState {
     }
 
     public Player getUpperPlayer() {
-        return getBoard().getGame().getPlayers().get(0);
+        return upperPlayer;
     }
 
-    /* [U6, U5, U4, U3, U2, U1,
-     *  L1, L2, L3, L4, L5, L6]
-     * 
-     * U : Upper, L : Lower
-     */
-    public ArrayList<Integer> getPits() {
-        throw new UnsupportedOperationException();
+    public Player getOpponent() {
+        if (currentPlayer == upperPlayer) {
+            return board.getGame().getPlayers().get(1);
+        } else {
+            return upperPlayer;
+        }
+    }
+
+    public List<Integer> getPits() {
+        return Collections.unmodifiableList(pits);
     }
 
     public int getPitIndex(Vector3 position) {
-        // int index = pos.getY() == 1.0
-        //     ? (int) (pos.getX() + 6)
-        //     : (int) (5 - pos.getX());
-        throw new UnsupportedOperationException();
+        int playerPitCount = pits.size() / 2;
+
+        if (position.getY() == 0.0) {
+            return (int) (playerPitCount - 1 - position.getX());
+        } else {
+            return (int) (playerPitCount + position.getX());
+        }
+    }
+
+    public Vector3 getPitPosition(int index) {
+        int playerPitCount = pits.size() / 2;
+
+        if (index < playerPitCount) {
+            return new Vector3(playerPitCount - 1 - index, 0.0, 0.0);
+        } else {
+            return new Vector3(index - playerPitCount, 1.0, 0.0);
+        }
     }
 
     public Vector3 getPitPosition(int index, Player player) {
@@ -93,11 +152,10 @@ public class AwaleBoardState implements BoardState {
     }
 
     public List<Integer> getPlayerPits() {
-        throw new UnsupportedOperationException();
+        return getPlayerPits(currentPlayer);
     }
 
     public List<Integer> getPlayerPits(Player player) {
-        Player upperPlayer = getUpperPlayer();
         int start, end;
 
         if (player == upperPlayer) {
@@ -112,7 +170,11 @@ public class AwaleBoardState implements BoardState {
     }
 
     public int getFirstPitIndex(Player player) {
-        throw new UnsupportedOperationException();
+        if (player == upperPlayer) {
+            return 0;
+        } else {
+            return pits.size() / 2;
+        }
     }
 
     public Vector3 getPlayerPitPosition(int i) {
@@ -120,11 +182,10 @@ public class AwaleBoardState implements BoardState {
     }
 
     public List<Integer> getOpponentPits() {
-        throw new UnsupportedOperationException();
+        return getOpponentPits(currentPlayer);
     }
 
     public List<Integer> getOpponentPits(Player player) {
-        Player upperPlayer = getUpperPlayer();
         int start, end;
 
         if (player == upperPlayer) {
@@ -142,23 +203,66 @@ public class AwaleBoardState implements BoardState {
         throw new UnsupportedOperationException();
     }
 
-    public ArrayList<Integer> getBanks() {
-        throw new UnsupportedOperationException();
+    public List<Integer> getBanks() {
+        return Collections.unmodifiableList(banks);
     }
 
     public int getPlayerBank() {
-        throw new UnsupportedOperationException();
+        return getPlayerBank(currentPlayer);
     }
 
     public int getPlayerBank(Player player) {
-        throw new UnsupportedOperationException();
+        if (player == upperPlayer) {
+            return banks.get(0);
+        } else {
+            return banks.get(1);
+        }
     }
 
     public int getPlayerBankIndex() {
-        throw new UnsupportedOperationException();
+        if (currentPlayer == upperPlayer) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     public int getOpponentBank(Player player) {
-        throw new UnsupportedOperationException();
+        if (player == upperPlayer) {
+            return banks.get(1);
+        } else {
+            return banks.get(0);
+        }
+    }
+
+    @Override
+    public String toString() {
+        String s = "";
+        int playerPitCount = pits.size() / 2;
+
+        s += banks.get(0);
+        s += "\n";
+        for (int i = playerPitCount - 1; i >= 0 ; --i) {
+            Integer pit = pits.get(i);
+            s += pit.toString() + " ";
+        }
+
+        s += "\n";
+
+        for (int i = playerPitCount; i < pits.size() ; ++i) {
+            Integer pit = pits.get(i);
+            s += pit.toString() + " ";
+        }
+
+        s += "\n";
+        s += banks.get(1);
+        s += "\n\n";
+
+        // 83, 61668
+        // if (s.equals("22\n1 0 1 1 1 0 \n0 0 1 0 1 0 \n20\n") && Game.i > 155) {
+        //     throw new IllegalStateException();
+        // }
+
+        return s;
     }
 }

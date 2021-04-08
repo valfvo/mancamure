@@ -15,7 +15,8 @@ public class AwaleMinmax extends Minmax {
     private static final double w5 = 0.418841;
     private static final double w6 = 0.565937;
 
-    private AwaleBoardState lastStateWherePlayerPlayed = null;
+    private AwaleBoardState lastPlayerState = null;
+    private AwaleMovement lastPlayerMovement = null;
 
     public AwaleMinmax(Board board, int depth, Player player) {
         super(board, depth, player);
@@ -24,7 +25,9 @@ public class AwaleMinmax extends Minmax {
     @Override
     public void beforeNextState(BoardState state, int currentDepth) {
         if (state.getCurrentPlayer() == getPlayer()) {
-            lastStateWherePlayerPlayed = (AwaleBoardState) state;
+            lastPlayerState = (AwaleBoardState) state;
+        } else {
+            lastPlayerMovement = (AwaleMovement) state.getLastMovement();
         }
     }
 
@@ -32,7 +35,7 @@ public class AwaleMinmax extends Minmax {
     public double evaluate(BoardState boardState) {
         AwaleBoardState state = (AwaleBoardState) boardState;
         List<Integer> playerPits = state.getPlayerPits(getPlayer());
-    
+
         // H1: keep as many seeds as possible in the leftmost pit of the player
         double h1 = playerPits.get(0);
 
@@ -59,9 +62,9 @@ public class AwaleMinmax extends Minmax {
         // H5: move the seeds from the closest pit to the opponent's side
         double h5 = 0.0;
 
-        if (lastStateWherePlayerPlayed != null) {
+        if (lastPlayerState != null && lastPlayerMovement != null) {
             int rightmostNonEmptyPlayerPitPosition = 0;
-            List<Integer> oldPits = lastStateWherePlayerPlayed.getPlayerPits();
+            List<Integer> oldPits = lastPlayerState.getPlayerPits();
 
             for (int i = oldPits.size() - 1; i >= 0; --i) {
                 if (oldPits.get(i) > 0) {
@@ -70,14 +73,11 @@ public class AwaleMinmax extends Minmax {
                 }
             }
 
-            AwaleMovement lastPlayerMove =
-                (AwaleMovement) lastStateWherePlayerPlayed.getLastMovement();
-
-            int lastMoveIndex = 
-                lastPlayerMove.getStartingPitIndex() % oldPits.size();
+            int lastMovementIndex = 
+                lastPlayerMovement.getStartingPitIndex() % oldPits.size();
 
             boolean lastMoveWasRightmost = 
-                lastMoveIndex == rightmostNonEmptyPlayerPitPosition;
+                lastMovementIndex == rightmostNonEmptyPlayerPitPosition;
 
             h5 = lastMoveWasRightmost ? 1.0 : 0.0;
         }

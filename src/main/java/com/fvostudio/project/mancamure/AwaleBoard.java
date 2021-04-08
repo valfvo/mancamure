@@ -4,12 +4,48 @@ import com.fvostudio.project.mancamure.gom.Board;
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.OwnableElement;
 import com.fvostudio.project.mancamure.gom.Cell;
+import com.fvostudio.project.mancamure.gom.MovableElement;
 import com.fvostudio.project.mancamure.gom.util.Vector3;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class AwaleBoard extends Board {
+    private AwaleBoardState state;
+    private int lines = 2;
+    private int columns = 6;
+    private int startingSeedCountPerPit = 4;
+
+    public AwaleBoard() {
+        // OwnableElement root = new OwnableElement();
+
+        for (int x = 0; x < columns; ++x) {
+            for (int y = 0 ; y < lines; ++y) {
+                Cell cell = new Cell(new Vector3(x, y, 0));
+
+                for (int i = 0; i < startingSeedCountPerPit; ++i) {
+                    cell.appendChild(new MovableElement());
+                }
+
+                obtain(cell);
+                // root.appendChild(cell);
+            }
+        }
+
+        obtain(new Bank());
+        obtain(new Bank());
+
+        // obtain(root);
+    }
+
+    public int getLineCount() {
+        return lines;
+    }
+
+    public int getColumnCount() {
+        return columns;
+    }
 
     private boolean validPosition(Vector3 position) {
         double x = position.getX();
@@ -25,7 +61,9 @@ public class AwaleBoard extends Board {
         Cell cell = null;
 
         for (OwnableElement element : ownedElements) {
-            if ((element instanceof Cell) && position.equals(((Cell) element).getPosition())) {
+            if ((element instanceof Cell)
+                && position.equals(((Cell) element).getPosition())
+            ) {
                 cell = (Cell) element;
                 break;
             }
@@ -34,10 +72,25 @@ public class AwaleBoard extends Board {
         return cell;
     }
 
+    public ArrayList<Bank> getBanks() {
+        ArrayList<Bank> banks = new ArrayList<>(2);
+
+        int ownedElementCount = ownedElements.size();
+        banks.add((Bank) ownedElements.get(ownedElementCount - 2));
+        banks.add((Bank) ownedElements.get(ownedElementCount - 1));
+
+        return banks;
+    }
+
     @Override
     public AwaleBoardState getState() {
-        ArrayList<Integer> pits = new ArrayList<Integer>();
-        ArrayList<Integer> banks = new ArrayList<Integer>();
+        if (getGame().getCurrentPlayer() == null) {
+            throw new IllegalStateException(
+                "Can not get a board state because the first round has not started.");
+        }
+        if (state != null) {
+            return state;
+        }
 
         /*
          *   [5.0, 4.0, 3.0, 2.0, 1.0, 0.0]
@@ -50,22 +103,23 @@ public class AwaleBoard extends Board {
          *  U : Upper, L : Lower
          */
 
-        int lines = 2;
-        int columns = 6;
+        ArrayList<Integer> pits = 
+            new ArrayList<>(Collections.nCopies(lines * columns, 0));
+
+        ArrayList<Integer> banks = new ArrayList<>(List.of(0, 0));
 
         // rempli pits
         for (int y = 0; y < lines; ++y) {
             for (int x = 0; x < columns; ++x) {
-
                 Vector3 coordCurrentCell = new Vector3(x, y, 0);
                 Cell currentCell = getCell(coordCurrentCell);
                 int seedCount = currentCell.getOwnableChildCount();
 
                 if (y == 0) {
-                    pits.add((columns - x) - 1 , seedCount); //5 4 3 2 1 0
+                    pits.set((columns - x) - 1 , seedCount);  // 5 4 3 2 1 0
                 }
                 else {
-                    pits.add(columns + x, seedCount); //6 7 8 9 10 11
+                    pits.set(columns + x, seedCount);  // 6 7 8 9 10 11
                 }
             }
         }
@@ -80,15 +134,18 @@ public class AwaleBoard extends Board {
                 int seedCount = element.getOwnableChildCount();
 
                 if (isFirstBank) {  //first bank found = upper bank
-                    banks.add(0, seedCount);
-                    isFirstBank = false;                }
+                    banks.set(0, seedCount);
+                    isFirstBank = false;
+                }
                 else {
-                    banks.add(1, seedCount);
+                    banks.set(1, seedCount);
+                    break;
                 }
             }
         }
 
-        return new AwaleBoardState(this, pits, banks);
+        state = new AwaleBoardState(this, pits, banks);
+        return state;
     }
 
     // private Vector3 getNewPosition(Vector3 startingPosition, int nbMove){
@@ -118,7 +175,28 @@ public class AwaleBoard extends Board {
     //     }
     // }
 
-    public void changeState(BoardState state) {
+    public void changeState(BoardState boardState) {
+        assert(boardState instanceof AwaleBoardState);
+        state = (AwaleBoardState) boardState;
+        return;
+
+        // List<Integer> pits = state.getPits();
+
+        // for (int i = 0; i < pits.size(); ++i) {
+        //     int pit = pits.get(i);
+        //     Cell cell = getCell(state.getPitPosition(i));
+        //     int seedCount = cell.getOwnableChildCount();
+
+        //     while (seedCount > pit) {
+        //         cell.getLastOwnableChild().remove();
+        //         --seedCount;
+        //     }
+        //     while (seedCount < pit) {
+        //         cell.appendChild(new MovableElement());
+        //         ++seedCount;
+        //     }
+        // }
+
         /*
          * current board:
          * banks: 10 15
@@ -130,10 +208,6 @@ public class AwaleBoard extends Board {
          * pits: 0 2 5 8 3 0
          *       3 0 1 0 0 1
          */
-
-        
-
-
 
         // // 1) recup la Cell qui faut vider et nombre de graines
         // AwaleMovement move = (AwaleMovement) state.getLastMovement();
