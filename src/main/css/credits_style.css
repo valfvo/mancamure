@@ -24,15 +24,18 @@ html, body {
     font-size: 1.4em;
 }
 
-/* #main_container div {
-    border: 1px solid greenyellow;
-} */
+#main_container div {
+    display: flex;
+    align-items: center;
+    
+    /* border: 1px solid brown; */
+}
 
 ul {
     list-style-type: none;
     padding: 0;
     width: 75%;
-    height: 100%;
+    height: 50%;
     margin: 0 auto;
     display: grid;
     flex-direction: column;
