@@ -3,6 +3,7 @@ package com.fvostudio.project.mancamure;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fvostudio.project.mancamure.gom.Board;
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.Movement;
 
@@ -16,6 +17,11 @@ public class AwaleMovement implements Movement {
 
     public AwaleMovement(int startingPitIndex) {
         this.startingPitIndex = startingPitIndex;
+    }
+
+    @Override
+    public void apply(Board board) {
+        board.changeState(getResultingState(board.getState()));
     }
 
     @Override
@@ -40,6 +46,8 @@ public class AwaleMovement implements Movement {
         ArrayList<Integer> newBanks = new ArrayList<>(state.getBanks());
         int playerBankIndex = state.getPlayerBankIndex();
 
+        newPits.set(startingPitIndex, 0);
+
         for (int i = destination; i > startingPitIndex; --i) {
             int realIndex = i % pitCount;
 
@@ -53,7 +61,9 @@ public class AwaleMovement implements Movement {
         if (destinationIsOnOpponentSide) {
             for (
                 int i = destination % pitCount;
-                i / playerPitCount != playerSide && 2 <= pits.get(i) && pits.get(i) <= 3;
+                (i >= 0
+                  && i / playerPitCount != playerSide)
+                  && 2 <= newPits.get(i) && newPits.get(i) <= 3;
                 --i
             ) {
                 int seedCount = newPits.get(i);
@@ -63,7 +73,7 @@ public class AwaleMovement implements Movement {
         }
 
         AwaleBoardState resultingState =
-            new AwaleBoardState(state.getBoard(), newPits, newBanks);
+            new AwaleBoardState(state, this, state.getOpponent(), newPits, newBanks);
 
         return resultingState;
     }

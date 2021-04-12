@@ -106,7 +106,48 @@ public abstract class Minmax implements Algorithm {
     }
 
     private double abMinmax(BoardState state, int currentDepth) {
-        return 0.0;
+        return abMinmax(state, currentDepth,
+                        Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+    }
+
+    private double abMinmax(BoardState state, int currentDepth, double a, double b) {
+        if (currentDepth == 0) {
+            return evaluate(state);
+        }
+
+        List<BoardState> nextStates = state.getNextStates();
+        if (nextStates.isEmpty()) {
+            return evaluate(state);
+        }
+
+        double bestValue;
+        FunctionTwo<Double, Double, Double> compare;
+
+        if (state.getCurrentPlayer() == player) {
+            bestValue = Double.NEGATIVE_INFINITY;
+            compare = Math::max;
+        } else {
+            bestValue = Double.POSITIVE_INFINITY;
+            compare = Math::min;
+        }
+
+        for (BoardState nextState : nextStates) {
+            beforeNextState(state, currentDepth);
+            double value = abMinmax(nextState, currentDepth - 1, a, b);
+            bestValue = compare.apply(bestValue, value);
+
+            if (state.getCurrentPlayer() == player) {
+                a  = compare.apply(a, bestValue);
+            } else {
+                b  = compare.apply(b, bestValue);
+            }
+
+            if (b <= a) {
+                break;
+            }
+        }
+
+        return bestValue;
     }
 
     public void beforeNextState(BoardState state, int currentDepth) {}
