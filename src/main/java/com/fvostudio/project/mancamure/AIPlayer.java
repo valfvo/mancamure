@@ -42,5 +42,4 @@ public class AIPlayer extends AwalePlayer implements MovementChooser {
     public Movement play() {
         return chooseMovement();
     }
-
 }

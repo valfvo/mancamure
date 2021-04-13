@@ -3,6 +3,7 @@ package com.fvostudio.project.mancamure;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.Movement;
@@ -20,46 +21,52 @@ public class AwaleBoardState implements BoardState {
     private ArrayList<Integer> pits;
     private ArrayList<Integer> banks;
 
-    public AwaleBoardState(
-        AwaleBoard board,
-        ArrayList<Integer> pits,
-        ArrayList<Integer> banks
-    ) {
-        this.board = board;
-        this.lastMovement = (AwaleMovement) board.getGame().getLastMovement();
-        this.upperPlayer = board.getGame().getPlayers().get(0);
-        this.currentPlayer = board.getGame().getCurrentPlayer();
-        this.pits = pits;
-        this.banks = banks;
-        this.isFinalState = board.getGame().isFinalState(this);
-    }
+    public AwaleBoardState(AwaleBoardStateFactory.Auth auth) {}
 
-    public AwaleBoardState(
-        AwaleBoardState state,
-        AwaleMovement lastMovement,
-        Player currentPlayer,
-        ArrayList<Integer> pits,
-        ArrayList<Integer> banks
-    ) {
-        this.board = state.getBoard();
-        this.lastMovement = lastMovement;
-        this.upperPlayer = state.getUpperPlayer();
-        this.currentPlayer = currentPlayer;
-        this.pits = pits;
-        this.banks = banks;
-        this.isFinalState = board.getGame().isFinalState(this);
-    }
+    // public AwaleBoardState(
+    //     AwaleBoard board,
+    //     ArrayList<Integer> pits,
+    //     ArrayList<Integer> banks
+    // ) {
+    //     this.board = board;
+    //     this.lastMovement = (AwaleMovement) board.getGame().getLastMovement();
+    //     this.upperPlayer = board.getGame().getPlayers().get(0);
+    //     this.currentPlayer = board.getGame().getCurrentPlayer();
+    //     this.pits = pits;
+    //     this.banks = banks;
+    //     this.isFinalState = board.getGame().isFinalState(this);
+    // }
+
+    // public AwaleBoardState(
+    //     AwaleBoardState state,
+    //     AwaleMovement lastMovement,
+    //     Player currentPlayer,
+    //     ArrayList<Integer> pits,
+    //     ArrayList<Integer> banks
+    // ) {
+    //     this.board = state.getBoard();
+    //     this.lastMovement = lastMovement;
+    //     this.upperPlayer = state.getUpperPlayer();
+    //     this.currentPlayer = currentPlayer;
+    //     this.pits = pits;
+    //     this.banks = banks;
+    //     this.isFinalState = board.getGame().isFinalState(this);
+    // }
 
     public void reset(
-        AwaleBoardState state,
+        AwaleBoardStateFactory.Auth auth,
+        AwaleBoard board,
         AwaleMovement lastMovement,
+        Player upperPlayer,
         Player currentPlayer,
         ArrayList<Integer> pits,
         ArrayList<Integer> banks
     ) {
-        this.board = state.getBoard();
+        Objects.requireNonNull(auth);
+
+        this.board = board;
         this.lastMovement = lastMovement;
-        this.upperPlayer = state.getUpperPlayer();
+        this.upperPlayer = upperPlayer;
         this.currentPlayer = currentPlayer;
         this.pits = pits;
         this.banks = banks;
@@ -125,6 +132,11 @@ public class AwaleBoardState implements BoardState {
 
     public List<Integer> getPits() {
         return Collections.unmodifiableList(pits);
+    }
+
+    public ArrayList<Integer> getModifiablePits(AwaleBoardStateFactory.Auth auth) {
+        Objects.requireNonNull(auth);
+        return pits;
     }
 
     public int getPitIndex(Vector3 position) {
@@ -205,6 +217,11 @@ public class AwaleBoardState implements BoardState {
 
     public List<Integer> getBanks() {
         return Collections.unmodifiableList(banks);
+    }
+
+    public ArrayList<Integer> getModifiableBanks(AwaleBoardStateFactory.Auth auth) {
+        Objects.requireNonNull(auth);
+        return banks;
     }
 
     public int getPlayerBank() {

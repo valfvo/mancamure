@@ -103,12 +103,12 @@ public class AwaleBoard extends Board {
          *  U : Upper, L : Lower
          */
 
-        ArrayList<Integer> pits = 
-            new ArrayList<>(Collections.nCopies(lines * columns, 0));
+        // ArrayList<Integer> pits = 
+        //     new ArrayList<>(Collections.nCopies(lines * columns, 0));
 
-        ArrayList<Integer> banks = new ArrayList<>(List.of(0, 0));
+        // ArrayList<Integer> banks = new ArrayList<>(List.of(0, 0));
 
-        // rempli pits
+        // fill pits
         for (int y = 0; y < lines; ++y) {
             for (int x = 0; x < columns; ++x) {
                 Vector3 coordCurrentCell = new Vector3(x, y, 0);
@@ -116,15 +116,17 @@ public class AwaleBoard extends Board {
                 int seedCount = currentCell.getOwnableChildCount();
 
                 if (y == 0) {
-                    pits.set((columns - x) - 1 , seedCount);  // 5 4 3 2 1 0
+                    // 5 4 3 2 1 0
+                    AwaleBoardStateFactory.setPit((columns - x) - 1 , seedCount);
                 }
                 else {
-                    pits.set(columns + x, seedCount);  // 6 7 8 9 10 11
+                    // 6 7 8 9 10 11
+                    AwaleBoardStateFactory.setPit(columns + x, seedCount);
                 }
             }
         }
 
-        // rempli banks
+        // fill banks
         List<OwnableElement> ownedElements = getOwnedElements();
 
         boolean isFirstBank = true;
@@ -134,17 +136,23 @@ public class AwaleBoard extends Board {
                 int seedCount = element.getOwnableChildCount();
 
                 if (isFirstBank) {  //first bank found = upper bank
-                    banks.set(0, seedCount);
+                    AwaleBoardStateFactory.setBank(0, seedCount);
                     isFirstBank = false;
                 }
                 else {
-                    banks.set(1, seedCount);
+                    AwaleBoardStateFactory.setBank(1, seedCount);
                     break;
                 }
             }
         }
 
-        state = new AwaleBoardState(this, pits, banks);
+        state = AwaleBoardStateFactory.getState(
+            this,
+            (AwaleMovement) getGame().getLastMovement(),
+            getGame().getPlayers().get(0),
+            getGame().getCurrentPlayer()
+        );
+
         return state;
     }
 
