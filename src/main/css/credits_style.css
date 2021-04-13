@@ -6,6 +6,7 @@ html, body {
     display: flex;
     align-items: center;
     background-color: beige;
+    font-family: 'african';
 }
 
 #main_container {
