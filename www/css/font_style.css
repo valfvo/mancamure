@@ -3,3 +3,32 @@
     src: url('../assets/font/african.ttf'), 
          url('../assets/font/african.woff');
 }
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url(../assets/font/Montserrat-ExtraLight.ttf),
+         url(../assets/font/Montserrat-ExtraLight.woff);
+}
+
+@font-face {
+    font-family: 'Montserrat-regular';
+    src: url(../assets/font/Montserrat-Regular.ttf),
+         url(../assets/font/Montserrat-Regular.woff);
+}
+
+@font-face {
+    font-family: 'Montserrat-Medium';
+    src: url(../assets/font/Montserrat-Medium.ttf),
+         url(../assets/font/Montserrat-Medium.woff);
+}
+
+@font-face {
+    font-family: 'Montserrat-SemiBold';
+    src: url(../assets/font/Montserrat-SemiBold.ttf),
+         url(../assets/font/Montserrat-SemiBold.woff);
+}
+
+body {
+    font-family: 'Montserrat', 'Montserrat-regular', 'Montserrat-medium',
+        sans-serif;
+}

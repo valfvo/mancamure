@@ -5,9 +5,14 @@ html, body {
     height: 100%;
     display: flex;
     align-items: center;
-    background-image: url("../assets/images/savane.jpg");
+
+    /* background-image: url("../assets/images/savane.jpg");
+    background-position: center; */
+
+    background-image: url("../assets/images/lion.jpg");
     background-position: center;
-    font-family: 'african';
+
+    background-color: #EAEAEA;
 }
 
 #main_container {
@@ -28,7 +33,9 @@ h1 {
     font-size: 3em;
     display: flex;
     align-items: center;
-    color: #5c1916;
+    color: #201D10;
+
+    font-family: 'Montserrat-Medium', sans-serif;
 
     /* border: 1px solid orangered; */
 }
@@ -60,6 +67,12 @@ ul {
 }
 
 .main ul li a {
+    font-family: 'Montserrat-Medium', sans-serif;
     text-decoration: none;
-    color: #6b2504;
+    color: #413126;
+}
+
+.main ul li a:hover {
+    font-family: 'Montserrat-semiBold', sans-serif;
+    color: #201D10;
 }
