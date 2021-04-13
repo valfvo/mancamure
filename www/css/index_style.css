@@ -5,7 +5,7 @@ html, body {
     height: 100%;
     display: flex;
     align-items: center;
-    background-image: url("../images/savane.jpg");
+    background-image: url("../assets/images/savane.jpg");
     background-position: center;
     font-family: 'african';
 }
@@ -15,7 +15,9 @@ html, body {
     width: 95vw;
     margin: 0 auto;
     display: grid;
-    grid-template-rows: 20% 80%;
+    grid-template-rows: 30% 70%;
+
+    /* border: 1px solid orange; */
 }
 
 
@@ -24,6 +26,11 @@ h1 {
     margin-left: 100px;
     padding-top: 25px;
     font-size: 3em;
+    display: flex;
+    align-items: center;
+    color: #5c1916;
+
+    /* border: 1px solid orangered; */
 }
 
 
@@ -40,19 +47,19 @@ ul {
     display: grid;
     flex-direction: column;
     align-content: flex-start;
-
-    /* border: 1px solid magenta; */
+/* 
+    border: 1px solid magenta; */
 }
 
 .main ul li {
     font-size: 2em;
     margin-top: 50px;
+    margin-bottom: 50px;
 
     /* border: 1px solid blue; */
 }
 
 .main ul li a {
     text-decoration: none;
-    color: black;
-    font-family: 'african';
+    color: #6b2504;
 }

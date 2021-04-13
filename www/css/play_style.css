@@ -34,13 +34,14 @@ html, body {
 .square_div div {
     display: grid;
     grid-template-rows: 80% 20%;
-    width: 80%;
+    width: 50%;
     height: 80%;
     margin: 0 auto;
     background-color: BurlyWood;
 
     /* border: 1px solid purple; */
 }
+
 
 #back_button {
     text-decoration: none;
@@ -70,26 +71,34 @@ html, body {
 }
 
 /*IN THE 4 MAIN DIVS*/
+/*text et img*/
+.square_div div div {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
 /*img*/
-.square_div div img {
+.div_img img {
     max-width: 100%;
     max-height: 100%;
-    width: 50%;
-    height: 100%;
+    width: 400px;
+    height: auto;
     margin: 0 auto;
 }
 
 /*text below img*/
-#main_container div p {
+.square_div div .text_below_img {
     margin: 0;
     font-size: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(151, 92, 64);
+    background-color:rgb(151, 92, 64);
 }
 
-#main_container div p a {
+#main_container div div a {
     text-decoration: none;
-    color: black;
+    color: beige;
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Player vs AI</title>
+        <link href="css/Player_vs_AI_style.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/font_style.css">
+    </head>
+    <body>
+        <div id="main_container">
+            <h1>AI configuration</h1>
+
+            <form action="" method="post">
+                <!-- choix algorithme -->
+                <div class="element_form">
+                    <label for="algorithm">Algorithm</label>
+                    <select name="choiceAlgorithm" id="algorithm">
+                        <option value="AB_minmax">AB_minmax</option>
+                        <option value="Basic_minmax">Basic_minmax</option>
+                    </select>
+                </div>
+
+                <!-- horizon -->
+                <div class="element_form">
+                    <label for="depth">depth</label>
+                    <input type="number" id="depth" min="1" max="11" value="1">
+                </div>
+
+                <input type="submit" name="confirm" id="confirm_button" 
+                    value="Confirm">
+            </form>
+        </div>
+    </body>
+</html>

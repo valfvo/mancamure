@@ -1,0 +1,88 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background-color: beige;
+    font-family: 'african';
+}
+
+
+#main_container {
+    height: 95vh;
+    width: 95vw;
+    margin: 0 auto;
+    display: grid;
+    grid-template-rows: 20% 80%;
+    align-items: center;
+
+    border: 1px solid #6b2504;
+}
+
+
+h1 {
+    width: 100%;
+    height: 100%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    color: #5c1916;
+    font-size: 3em;
+
+    border-bottom: 1px solid #6b2504;
+}
+
+
+form {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr 1fr 50px;
+    /* align-items: center; */
+}
+
+.element_form {
+    border-bottom: 1px solid #6b2504;
+}
+
+.element_form label {
+    display: inline-block;
+    font-size: 2em;
+    color: #6b2504;
+    margin-right: 15px;
+
+    /* border: 1px solid green; */
+}
+
+
+.element_form select, .element_form input {
+    position: absolute;
+    background-color: Sienna;
+    color: beige;
+    font-size: 1.5em;
+    text-align: center;
+
+    /* border: 1px solid orangered; */
+}
+
+.element_form select {
+    height: 35px;
+}
+
+.element_form input {
+    height: 30px;
+}
+
+
+#confirm_button {
+    height: 100%;
+    border: none;
+    font-size: 2em;
+    background-color: rgb(151, 92, 64);
+    color: beige;
+}
+
+
+

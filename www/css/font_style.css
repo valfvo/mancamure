@@ -1,0 +1,5 @@
+@font-face {
+    font-family: 'african';
+    src: url('../assets/font/african.ttf'), 
+         url('../assets/font/african.woff');
+}
