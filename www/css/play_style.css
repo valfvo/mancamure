@@ -45,6 +45,9 @@ html, body {
     color: black;   
     font-size: 1.4em;
 }
+#back_button:hover {
+    font-size: 1.5em;
+}
 
 /*POSITION 4 DIVS*/
 .top_left {

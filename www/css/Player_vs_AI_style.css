@@ -35,6 +35,9 @@ html, body {
     font-size: 1.4em;
     margin-left: 5px;
 }
+#back_button:hover {
+    font-size: 1.5em;
+}
 
 h1 {
     width: 100%;
@@ -58,11 +61,9 @@ form {
 .element_form {
     display: flex;
     align-items: center;
-}
-
-.element_form {
     border-bottom: 1px solid #694834;
 }
+
 
 .element_form label {
     display: inline-block;
@@ -70,6 +71,7 @@ form {
     color: #413126;
     margin-right: 15px;
     margin-left: 5px;
+    font-family: 'Montserrat-Regular';
 
     /* border: 1px solid green; */
 }

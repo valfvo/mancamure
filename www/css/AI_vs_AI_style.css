@@ -24,17 +24,18 @@ html, body {
     font-size: 1.4em;
     margin-left: 5px;
 }
+#back_button:hover {
+    font-size: 1.5em;
+}
 
 
 #center_container {
     width: 80%;
-    height: 80%;
+    height: 100%;
     margin: 0 auto;
     display: grid;
-    grid-template-rows: 20% 1fr;
+    grid-template-rows: 15% 1fr;
     align-items: center;
-
-    border: 2px blue solid;
 }
 
 h1 {
@@ -45,7 +46,7 @@ h1 {
     justify-content: center;
     color: #201D10;
     font-size: 3em;
-    border-bottom: 1px solid #694834;
+    border-bottom: 1px solid #201D10;
 }
 
 
@@ -65,34 +66,46 @@ form {
 }
 
 .left_side, .right_side {
+    width: 70%;
+    height: 90%;
+    display: grid;
+    grid-template-rows: 80px 1fr 1fr;
+    margin: 0 auto;
+    
+    border-top: 1px solid #413126;
+    border-left: 1px solid #413126;
+    border-right: 1px solid #413126;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.25);
+}
+
+h3 {
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-rows: 1fr 1fr;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    color: #694834;
+    font-size: 3em;
+
+    border-bottom: 1px solid #413126;
 }
 
-.left_side {
-    border-right: 1px solid #694834;
-}
-
-/*div de select + input*/
 .element_form {
     display: flex;
     align-items: center;
+
+    border-bottom: 1px solid #413126;
 }
 
-.element_form {
-    border-bottom: 1px solid #694834;
-}
-
+/*label*/
 .element_form label {
     display: inline-block;
     font-size: 2em;
     color: #413126;
     margin-right: 15px;
-    margin-left: 5px;
-
-    /* border: 1px solid green; */
+    margin-left: 10px;
+    font-family: 'Montserrat-Regular', sans-serif;
 }
 
 /*element apres les deux labels*/
@@ -114,11 +127,15 @@ form {
     height: 30px;
 }
 
-
+/*bouton confirm*/
 #confirm_button {
     height: 100%;
     border: none;
     font-size: 2em;
     background-color: #EAEAEA;
     color: #413126;
+    font-family: 'Montserrat-Regular', sans-serif;
+}
+#confirm_button:hover {
+    font-family: 'Montserrat-Medium', sans-serif;
 }

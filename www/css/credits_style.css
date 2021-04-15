@@ -23,6 +23,9 @@ html, body {
     color: black;   
     font-size: 1.4em;
 }
+#back_button:hover {
+    font-size: 1.5em;
+}
 
 #main_container div {
     display: flex;
