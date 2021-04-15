@@ -51,10 +51,41 @@ ul li h2 {
     font-size: 2em;
 }
 
+
 ul li {
     font-size: 1.5em;
     text-align: center;
     margin-top: 10px;
 
     /* border: 1px solid blue; */
+}
+ul li:not(:first-child):hover {
+    font-family: 'Montserrat-Regular';
+}
+
+
+/*responsive height*/
+@media screen and (max-height: 600px) {
+    ul {
+        margin-bottom: 100px;
+    }   
+}
+
+@media screen and (max-height: 500px) {
+    ul li h2 {
+        font-size: 1.5em;
+    }
+    
+    ul li {
+        font-size: 1.2em;
+    }
+
+    #back_button {
+        text-decoration: none;
+        color: black;   
+        font-size: 1.2em;
+    }
+    #back_button:hover {
+        font-size: 1.3em;
+    }
 }

@@ -4,6 +4,9 @@
          url('../assets/font/african.woff');
 }
 
+/* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;500;600&display=swap'); */
+
+
 @font-face {
     font-family: 'Montserrat';
     src: url(../assets/font/Montserrat-ExtraLight.ttf),
@@ -11,7 +14,7 @@
 }
 
 @font-face {
-    font-family: 'Montserrat-regular';
+    font-family: 'Montserrat-Regular';
     src: url(../assets/font/Montserrat-Regular.ttf),
          url(../assets/font/Montserrat-Regular.woff);
 }
@@ -29,6 +32,6 @@
 }
 
 body {
-    font-family: 'Montserrat', 'Montserrat-regular', 'Montserrat-medium',
+    font-family: 'Montserrat', 'Montserrat-Regular', 'Montserrat-Medium',
         sans-serif;
 }
