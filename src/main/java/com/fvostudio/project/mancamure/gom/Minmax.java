@@ -106,6 +106,7 @@ public abstract class Minmax implements Algorithm {
             beforeNextState(state, currentDepth);
             double value = basicMinmax(nextState, currentDepth - 1);
             bestValue = compare.apply(bestValue, value);
+            AwaleBoardStateFactory.recycle((AwaleBoardState) nextState);
         }
 
         return bestValue;
@@ -151,6 +152,7 @@ public abstract class Minmax implements Algorithm {
             if (b <= a) {
                 break;
             }
+            AwaleBoardStateFactory.recycle((AwaleBoardState) nextState);
         }
 
         return bestValue;

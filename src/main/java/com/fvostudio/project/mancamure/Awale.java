@@ -1,46 +1,71 @@
 package com.fvostudio.project.mancamure;
 
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.Cell;
 import com.fvostudio.project.mancamure.gom.Game;
 import com.fvostudio.project.mancamure.gom.Movement;
+import com.fvostudio.project.mancamure.gom.Observable;
 import com.fvostudio.project.mancamure.gom.OwnableElement;
 import com.fvostudio.project.mancamure.gom.Player;
 import com.fvostudio.project.mancamure.gom.util.Pair;
 import com.fvostudio.project.mancamure.gom.util.Vector3;
 
-public class Awale extends Game implements Runnable {
-    List<String> args; 
+public class Awale extends Game implements Observable {
+    private ArrayList<Socket> observerSockets;
 
-    public Awale(List<String> args) {
-        this.args = args;
+    // private Socket clientSocket;
+
+    // public Awale() {
+    //     this.observerSockets = 
+    //     // this.args = args;
+    //     // this.clientSocket = clientSocket;
+    // }
+
+    // @Override
+    // public void run() {
+    //     AwaleBoard board = new AwaleBoard();
+    //     setBoard(board);
+
+    //     boolean isAbPruningEnabled = Boolean.valueOf(args.get(2));
+
+    //     HumanPlayer playerOne = new HumanPlayer(this.clientSocket);
+    //     add(playerOne);
+
+    //     // AIPlayer playerOne = new AIPlayer();
+    //     // add(playerOne);
+    //     // int depthOne = Integer.valueOf(args.get(0));
+    //     // AwaleMinmax minmaxOne = new AwaleMinmax(board, depthOne, playerOne);
+    //     // minmaxOne.setAbPruningEnabled(isAbPruningEnabled);
+    //     // playerOne.setAlgorithm(minmaxOne);
+
+    //     AIPlayer playerTwo = new AIPlayer();
+    //     add(playerTwo);
+    //     int depthTwo = Integer.valueOf(args.get(1));
+    //     AwaleMinmax minmaxTwo = new AwaleMinmax(board, depthTwo, playerTwo);
+    //     minmaxTwo.setAbPruningEnabled(isAbPruningEnabled);
+    //     playerTwo.setAlgorithm(minmaxTwo);
+
+    //     start();
+    // }
+
+    @Override
+    public List<Socket> getObservers() {
+        return Collections.unmodifiableList(observerSockets);
     }
 
     @Override
-    public void run() {
-        AwaleBoard board = new AwaleBoard();
-        setBoard(board);
+    public void addObserver(Socket observerSocket) {
+        this.observerSockets.add(observerSocket);
+    }
 
-        boolean isAbPruningEnabled = Boolean.valueOf(args.get(2));
-
-        AIPlayer playerOne = new AIPlayer();
-        add(playerOne);
-        int depthOne = Integer.valueOf(args.get(0));
-        AwaleMinmax minmaxOne = new AwaleMinmax(board, depthOne, playerOne);
-        minmaxOne.setAbPruningEnabled(isAbPruningEnabled);
-        playerOne.setAlgorithm(minmaxOne);
-
-        AIPlayer playerTwo = new AIPlayer();
-        add(playerTwo);
-        int depthTwo = Integer.valueOf(args.get(1));
-        AwaleMinmax minmaxTwo = new AwaleMinmax(board, depthTwo, playerTwo);
-        minmaxTwo.setAbPruningEnabled(isAbPruningEnabled);
-        playerTwo.setAlgorithm(minmaxTwo);
-
-        start();
+    @Override
+    public void addObservers(List<Socket> observerSockets) {
+        this.observerSockets.addAll(observerSockets);
     }
 
     @Override
@@ -121,14 +146,19 @@ public class Awale extends Game implements Runnable {
             (AwaleBoardState) movement.getResultingState(state);
 
         List<Integer> resultingOpponentPits =
-            resultingState.getOpponentPits(state.getCurrentPlayer());
+        resultingState.getOpponentPits(state.getCurrentPlayer());
+        
+        // System.out.println("TU VAS COMPILER OUI");
+        // System.out.println("size factory = " + AwaleBoardStateFactory.queue.size());
+        AwaleBoardStateFactory.recycle(resultingState);
+        // System.out.println("size factory after recycle = " + AwaleBoardStateFactory.queue.size());
 
-        // can't starve the opponent
+        // can't starve the opponent    
         for (int pit : resultingOpponentPits) {
             if (pit > 0) {
                 return true;
-            }
-        }
+            }    
+        }    
 
         return false;
     }

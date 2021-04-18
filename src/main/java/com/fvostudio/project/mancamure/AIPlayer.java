@@ -1,5 +1,7 @@
 package com.fvostudio.project.mancamure;
 
+import java.util.Scanner;
+
 import com.fvostudio.project.mancamure.gom.Algorithm;
 import com.fvostudio.project.mancamure.gom.Movement;
 import com.fvostudio.project.mancamure.gom.MovementChooser;
@@ -34,6 +36,11 @@ public class AIPlayer extends AwalePlayer implements MovementChooser {
 
         algorithm.execute();
         Movement bestMovement = (Movement) algorithm.getReturnValue();
+        System.out.println("Coup joué, états crées = " + AwaleBoardStateFactory.i);
+        System.out.println("Press enter to exit...");
+        Scanner scan = new Scanner(System.in);
+        scan.nextLine();
+        scan.close();
 
         return bestMovement;
     }

@@ -185,6 +185,7 @@ public class AwaleBoard extends Board {
 
     public void changeState(BoardState boardState) {
         assert(boardState instanceof AwaleBoardState);
+        AwaleBoardStateFactory.recycle(state);
         state = (AwaleBoardState) boardState;
         return;
 
