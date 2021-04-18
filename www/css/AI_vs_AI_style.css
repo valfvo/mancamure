@@ -85,7 +85,7 @@ h3 {
     align-items: center;
     justify-content: center;
     margin: 0;
-    color: #694834;
+    color: #201D10;
     font-size: 3em;
 
     border-bottom: 1px solid #413126;
@@ -102,7 +102,7 @@ h3 {
 .element_form label {
     display: inline-block;
     font-size: 2em;
-    color: #413126;
+    color: #201D10;
     margin-right: 15px;
     margin-left: 10px;
     font-family: 'Montserrat-Regular', sans-serif;
@@ -111,7 +111,7 @@ h3 {
 /*element apres les deux labels*/
 .element_form select, .element_form input {
     position: absolute;
-    background-color: #D9C9B4;
+    background-color: #E1DAD4;
     color: #413126;
     font-size: 1.5em;
     text-align: center;
@@ -133,7 +133,7 @@ h3 {
     border: none;
     font-size: 2em;
     background-color: #EAEAEA;
-    color: #413126;
+    color: #201D10;
     font-family: 'Montserrat-Regular', sans-serif;
 }
 #confirm_button:hover {
