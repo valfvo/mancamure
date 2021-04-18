@@ -109,24 +109,6 @@ html, body {
     color: #EAEAEA;
 }
 
-/*anime div du text_below_img*/
-.text_below_img:hover {
-    text-shadow: 1px 1px 2px black;
-    cursor: pointer;
-}
-.top_left .text_below_img:hover {
-    background-color: #38a8b3;
-}
-.top_right .text_below_img:hover {
-    background-color: #ffc71a;
-}
-.bottom_left .text_below_img:hover {
-    background-color: #a069ba;
-}
-.bottom_right .text_below_img:hover {
-    background-color: #95c501;
-}
-
 
 /*text*/
 .text-mode {
@@ -136,7 +118,7 @@ html, body {
 
 
 
-/*responsive weight*/
+/*responsive width*/
 @media screen and (max-width: 1000px) {
     .square_div {
         height: 80%;
