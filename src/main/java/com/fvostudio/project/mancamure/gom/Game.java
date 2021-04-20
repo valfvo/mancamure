@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.fvostudio.project.mancamure.AwaleBoardStateFactory;
-
 public abstract class Game {
     public static final class Auth { private Auth() {} }
     private static final Auth auth = new Auth();
@@ -87,8 +85,6 @@ public abstract class Game {
         isFinished = false;
         currentPlayerIndex = -1;
 
-        System.out.println("deb");
-
         while (!isFinished) {
             ++i;
             if (i > 1000) {
@@ -97,19 +93,27 @@ public abstract class Game {
             initializeNextRound();
             startNextRound();
             // break;
-            System.out.println(i);
-            System.out.println(getBoard().getState().toString());
+            // System.out.println(i);
+            // System.out.println(getBoard().getState().toString());
             checkForGameEnd();
         }
 
-        System.out.println("fin, total state created = " + AwaleBoardStateFactory.i);
+        onEnd();
     }
+
+    public void onStart() {}
+
+    public void onEnd() {}
 
     public void initializeNextRound() {
         if (currentPlayerIndex == players.size() - 1) {
             currentPlayerIndex = 0;
         } else {
             ++currentPlayerIndex;
+
+            if (currentPlayerIndex == 0) {
+                onStart();
+            }
         }
     }
 

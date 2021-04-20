@@ -1,5 +1,7 @@
 package com.fvostudio.project.mancamure;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +18,7 @@ import com.fvostudio.project.mancamure.gom.util.Pair;
 import com.fvostudio.project.mancamure.gom.util.Vector3;
 
 public class Awale extends Game implements Observable {
-    private ArrayList<Socket> observerSockets;
+    private ArrayList<Socket> observerSockets = new ArrayList<>();
 
     // private Socket clientSocket;
 
@@ -68,6 +70,16 @@ public class Awale extends Game implements Observable {
         this.observerSockets.addAll(observerSockets);
     }
 
+    public void notifyObserversOfBoardUpdate() {
+        AwaleBoardState currentState = (AwaleBoardState) getBoard().getState();
+        notifyObservers(currentState.getSerializedBoard());
+    }
+
+    public void notifyObserversOfGameEnd() {
+        byte[] serializedGameEnd = {2, 0};
+        notifyObservers(serializedGameEnd);
+    }
+
     @Override
     public void add(Player player) {
         super.add(player);
@@ -82,6 +94,22 @@ public class Awale extends Game implements Observable {
         }
 
         player.obtain(currentBoard.getBanks().get(y));
+    }
+
+    @Override
+    public void onStart() {
+        notifyObserversOfBoardUpdate();
+    }
+
+    @Override
+    public void onEnd() {
+        notifyObserversOfGameEnd();
+    }
+
+    @Override
+    public void startNextRound() {
+        super.startNextRound();
+        notifyObserversOfBoardUpdate();
     }
 
     @Override
@@ -147,11 +175,6 @@ public class Awale extends Game implements Observable {
 
         List<Integer> resultingOpponentPits =
         resultingState.getOpponentPits(state.getCurrentPlayer());
-        
-        // System.out.println("TU VAS COMPILER OUI");
-        // System.out.println("size factory = " + AwaleBoardStateFactory.queue.size());
-        AwaleBoardStateFactory.recycle(resultingState);
-        // System.out.println("size factory after recycle = " + AwaleBoardStateFactory.queue.size());
 
         // can't starve the opponent    
         for (int pit : resultingOpponentPits) {

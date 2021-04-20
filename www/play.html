@@ -6,6 +6,8 @@
         <title>Play</title>
         <link href="css/play_style.css" rel="stylesheet">
         <link rel="stylesheet" href="css/font_style.css">
+
+        <script src="js/play.js" defer></script>
     </head>
     <body>
         <div id="main_container">
@@ -13,28 +15,28 @@
                 <a id="back_button" href="index.html">back</a>
             </div>
             <div class="square_div">
-                <div class="top_left elem_square">
+                <div class="top_left elem_square yu-anchor" data-yu-href="Player_vs_AI.html">
                     <div class="player-vs-ai"></div>
                     <div class="text_below_img">
                         <p class="text-mode">Player vs AI</p>
                     </div>
                 </div>
     
-                <div class="top_right elem_square">
+                <div class="top_right elem_square yu-anchor" data-yu-href="Player_vs_Player.html">
                     <div class="player-vs-player"></div>
                     <div class="text_below_img">
                         <p class="text-mode">Player vs Player</p>
                     </div>
                 </div>
     
-                <div class="bottom_left elem_square">
+                <div class="bottom_left elem_square yu-anchor" data-yu-href="AI_vs_AI.html">
                     <div class="ai-vs-ai"></div>
                     <div class="text_below_img">
                         <p class="text-mode">AI vs AI</p>
                     </div>
                 </div>
     
-                <div class="bottom_right elem_square">
+                <div class="bottom_right elem_square yu-anchor" data-yu-href="free_mode.html">
                     <div class="free-mode"></div>
                     <div class="text_below_img">
                         <p class="text-mode">Free mode</p>
@@ -42,6 +44,5 @@
                 </div>
             </div>
         </div>
-        <script src="js/play.js"></script>
     </body>
 </html>

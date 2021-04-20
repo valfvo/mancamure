@@ -5,33 +5,34 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
-// import java.io.IOException;
-// import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 
 import com.fvostudio.project.mancamure.gom.Element;
 import com.fvostudio.project.mancamure.gom.GameHandler;
 
-// import javafx.application.Application;
-// import javafx.concurrent.Worker;
-// import javafx.scene.Scene;
-// import javafx.scene.web.WebEngine;
-// import javafx.scene.web.WebView;
-// import javafx.stage.Stage;
-// import netscape.javascript.JSObject;
-
-// public class App extends Application {
 public class App {
-    private enum Role {
-        OBSERVER,
-        PLAYER
-    }
-
     private enum GameType {
         EVE,
         PVE,
-        PVP
+        PVP;
+
+        private static final GameType[] gameTypeValues = GameType.values();
+
+        public static GameType valueOf(int ordinal) {
+            return gameTypeValues[ordinal];
+        }
+    }
+
+    private enum Role {
+        OBSERVER,
+        PLAYER;
+
+        private static final Role[] roleValues = Role.values();
+
+        public static Role valueOf(int ordinal) {
+            return roleValues[ordinal];
+        }
     }
 
     private static Element runningEveGames = new Element();
@@ -54,8 +55,8 @@ public class App {
         if (role == Role.PLAYER) {
             InputStream input = clientSocket.getInputStream();
 
-            int depth = input.read();
             boolean isAbPruningEnabled = input.read() != 0;
+            int depth = input.read();
 
             waitingPveObservers.offer(clientSocket);
 
@@ -102,19 +103,16 @@ public class App {
     }
 
     public static void main(String[] args) throws IOException {
-        // launch(args);
         ServerSocket serverSocket = new ServerSocket(3034);
-        // ArrayList<Thread> clientThreads = new ArrayList<>();
-        // Arbre d'élément de game
 
         for (;;) {
             // client request
-            // gameType | role |
+            // gameType | role | algorithm | depth
             Socket clientSocket = serverSocket.accept();
             InputStream input = clientSocket.getInputStream();
 
-            GameType gameType = GameType.values()[input.read()];
-            Role role = Role.values()[input.read()];
+            GameType gameType = GameType.valueOf(input.read());
+            Role role = Role.valueOf(input.read());
 
             switch (gameType) {
                 case EVE:
@@ -129,26 +127,6 @@ public class App {
                 default:
                     break;
             }
-
-            // ArrayList<Socket> observerSockets = new ArrayList<>();
-            // observerSockets.add(clientSocket);
-            // est-ce que le client est un joueur attendu ?
-            // client is a player or an observer ? (role)
-            // game type
-
-            // Awale game = new Awale(List.of(args), clientSocket);
-            // GameHandler gameHandler = new GameHandler(game);
-            // runningGames.appendChild(gameHandler);
-            // new Thread(gameHandler).start();
-
-            // clientThreads.add(new Thread(game));
-            // clientThreads.get(clientThreads.size() - 1).start();
-            // game.run();
         }
-
-        // System.out.println("Press enter to exit...");
-        // Scanner scan = new Scanner(System.in);
-        // scan.nextLine();
-        // scan.close();
     }
 }

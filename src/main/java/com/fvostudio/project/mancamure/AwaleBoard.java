@@ -103,10 +103,10 @@ public class AwaleBoard extends Board {
          *  U : Upper, L : Lower
          */
 
-        // ArrayList<Integer> pits = 
-        //     new ArrayList<>(Collections.nCopies(lines * columns, 0));
+        ArrayList<Integer> pits = 
+            new ArrayList<>(Collections.nCopies(lines * columns, 0));
 
-        // ArrayList<Integer> banks = new ArrayList<>(List.of(0, 0));
+        ArrayList<Integer> banks = new ArrayList<>(List.of(0, 0));
 
         // fill pits
         for (int y = 0; y < lines; ++y) {
@@ -117,11 +117,11 @@ public class AwaleBoard extends Board {
 
                 if (y == 0) {
                     // 5 4 3 2 1 0
-                    AwaleBoardStateFactory.setPit((columns - x) - 1 , seedCount);
+                    pits.set((columns - x) - 1 , seedCount);
                 }
                 else {
                     // 6 7 8 9 10 11
-                    AwaleBoardStateFactory.setPit(columns + x, seedCount);
+                    pits.set(columns + x, seedCount);
                 }
             }
         }
@@ -136,22 +136,17 @@ public class AwaleBoard extends Board {
                 int seedCount = element.getOwnableChildCount();
 
                 if (isFirstBank) {  //first bank found = upper bank
-                    AwaleBoardStateFactory.setBank(0, seedCount);
+                    banks.set(0, seedCount);
                     isFirstBank = false;
                 }
                 else {
-                    AwaleBoardStateFactory.setBank(1, seedCount);
+                    banks.set(1, seedCount);
                     break;
                 }
             }
         }
 
-        state = AwaleBoardStateFactory.getState(
-            this,
-            (AwaleMovement) getGame().getLastMovement(),
-            getGame().getPlayers().get(0),
-            getGame().getCurrentPlayer()
-        );
+        state = new AwaleBoardState(this, pits, banks);
 
         return state;
     }
@@ -185,8 +180,8 @@ public class AwaleBoard extends Board {
 
     public void changeState(BoardState boardState) {
         assert(boardState instanceof AwaleBoardState);
-        AwaleBoardStateFactory.recycle(state);
         state = (AwaleBoardState) boardState;
+
         return;
 
         // List<Integer> pits = state.getPits();

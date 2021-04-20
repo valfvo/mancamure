@@ -5,65 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game</title>
 
-  <link href="css/game_style.css" rel="stylesheet">
+  <link href="css/game-style.css" rel="stylesheet">
 
   <!-- <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Quicksand&display=swap" rel="stylesheet"> -->
-  <script src="js/mancamure.js" defer></script>
+  <script src="https://cdn.socket.io/4.0.1/socket.io.min.js" integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU" crossorigin="anonymous"></script>
+  <script src="js/game.js" defer></script>
 </head>
 <body>
   <div class="frame">
     <div class="board">
       <div class="left bank"></div>
       <div class="top row">
-        <div class="cell">
-          <div class="seed"></div>
-          <div class="seed seed2"></div>
-          <div class="seed seed3"></div>
-        </div>
-        <div class="cell">
-          <div class="seed seed2"></div>
-        </div>
-        <div class="cell">
-          <div class="seed"></div>
-          <div class="seed seed2"></div>
-        </div>
-        <div class="cell">
-          <div class="seed"></div>
-          <div class="seed seed2"></div>
-          <div class="seed seed3"></div>
-        </div>
-        <div class="cell"></div>
-        <div class="cell">
-          <div class="seed"></div>
-          <div class="seed seed3"></div>
-        </div>
+        <div class="pit"></div>
+        <div class="pit"></div>
+        <div class="pit"></div>
+        <div class="pit"></div>
+        <div class="pit"></div>
+        <div class="pit"></div>
       </div>
       <div class="bottom row">
-        <div class="cell"></div>
-        <div class="cell">
-          <div class="seed"></div>
-          <div class="seed seed2"></div>
-          <div class="seed seed3"></div>
-        </div>
-        <div class="cell">
-          <div class="seed"></div>
-          <div class="seed seed2"></div>
-          <div class="seed seed3"></div>
-        </div>
-        <div class="cell">
-          <div class="seed"></div>
-          <div class="seed seed3"></div>
-        </div>
-        <div class="cell">
-          <div class="seed"></div>
-        </div>
-        <div class="cell">
-          <div class="seed seed2"></div>
-          <div class="seed seed3"></div>
-        </div>
+        <div class="pit player-element"></div>
+        <div class="pit player-element"></div>
+        <div class="pit player-element"></div>
+        <div class="pit player-element"></div>
+        <div class="pit player-element"></div>
+        <div class="pit player-element"></div>
       </div>
-      <div class="right bank"></div>
+      <div class="right bank player-element"></div>
     </div>
   </div>
 </body>

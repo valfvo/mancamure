@@ -3,9 +3,6 @@ package com.fvostudio.project.mancamure.gom;
 import java.util.List;
 import java.util.Objects;
 
-import com.fvostudio.project.mancamure.AwaleBoardState;
-import com.fvostudio.project.mancamure.AwaleBoardStateFactory;
-
 public abstract class Minmax implements Algorithm {
     @FunctionalInterface
     private interface FunctionTwo<TArgOne, TArgTwo, TReturn> {
@@ -47,8 +44,6 @@ public abstract class Minmax implements Algorithm {
                 bestValue = value;
                 bestMovement = state.getLastMovement();
             }
-
-            AwaleBoardStateFactory.recycle((AwaleBoardState) state);
         }
     }
 
@@ -106,7 +101,6 @@ public abstract class Minmax implements Algorithm {
             beforeNextState(state, currentDepth);
             double value = basicMinmax(nextState, currentDepth - 1);
             bestValue = compare.apply(bestValue, value);
-            AwaleBoardStateFactory.recycle((AwaleBoardState) nextState);
         }
 
         return bestValue;
@@ -152,7 +146,6 @@ public abstract class Minmax implements Algorithm {
             if (b <= a) {
                 break;
             }
-            AwaleBoardStateFactory.recycle((AwaleBoardState) nextState);
         }
 
         return bestValue;

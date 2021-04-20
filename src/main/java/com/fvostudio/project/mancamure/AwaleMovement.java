@@ -38,18 +38,20 @@ public class AwaleMovement implements Movement {
         int playerSide = startingPitIndex / playerPitCount;
 
         // cumulative index of the destination pit
+        // + loopCount : the starting pit must remain empty after the move
         int destination = (startingPitIndex + sowedSeedCount + loopCount);
         boolean destinationIsOnOpponentSide = 
             (destination % pitCount) / playerPitCount != playerSide;
 
-        // ArrayList<Integer> newPits = new ArrayList<>(pits);
-        // ArrayList<Integer> newBanks = new ArrayList<>(state.getBanks());
-        AwaleBoardStateFactory.setPits(pits);
-        AwaleBoardStateFactory.setBanks(state.getBanks());
+        ArrayList<Integer> newPits = new ArrayList<>(pits);
+        ArrayList<Integer> newBanks = new ArrayList<>(state.getBanks());
+        // AwaleBoardStateFactory.initializeNextElement();
+        // AwaleBoardStateFactory.setPits(pits);
+        // AwaleBoardStateFactory.setBanks(state.getBanks());
 
         int playerBankIndex = state.getPlayerBankIndex();
 
-        AwaleBoardStateFactory.setPit(startingPitIndex, 0);
+        newPits.set(startingPitIndex, 0);
 
         for (int i = destination; i > startingPitIndex; --i) {
             int realIndex = i % pitCount;
@@ -58,8 +60,7 @@ public class AwaleMovement implements Movement {
                 continue;
             }
 
-            AwaleBoardStateFactory.setPit(
-                realIndex, AwaleBoardStateFactory.getPit(realIndex) + 1);
+            newPits.set(realIndex, newPits.get(realIndex) + 1);
         }
 
         if (destinationIsOnOpponentSide) {
@@ -67,24 +68,20 @@ public class AwaleMovement implements Movement {
                 int i = destination % pitCount;
                 i >= 0
                  && i / playerPitCount != playerSide
-                 && 2 <= AwaleBoardStateFactory.getPit(i)
-                 && AwaleBoardStateFactory.getPit(i) <= 3;
+                 && 2 <= newPits.get(i)
+                 && newPits.get(i) <= 3;
                 --i
             ) {
-                int seedCount = AwaleBoardStateFactory.getPit(i);
-                AwaleBoardStateFactory.setPit(i, 0);
+                int seedCount = newPits.get(i);
+                newPits.set(i, 0);
 
-                AwaleBoardStateFactory.setBank(playerBankIndex,
-                    AwaleBoardStateFactory.getBank(playerBankIndex) + seedCount);
+                newBanks.set(playerBankIndex,
+                    newBanks.get(playerBankIndex) + seedCount);
             }
         }
 
-        AwaleBoardState resultingState = AwaleBoardStateFactory.getState(
-            state.getBoard(),
-            this,
-            state.getUpperPlayer(),
-            state.getOpponent()
-        );
+        AwaleBoardState resultingState =
+            new AwaleBoardState(state, this, state.getOpponent(), newPits, newBanks);
 
         return resultingState;
     }

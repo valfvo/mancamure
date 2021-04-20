@@ -21,52 +21,30 @@ public class AwaleBoardState implements BoardState {
     private ArrayList<Integer> pits;
     private ArrayList<Integer> banks;
 
-    public AwaleBoardState(AwaleBoardStateFactory.Auth auth) {}
-
-    // public AwaleBoardState(
-    //     AwaleBoard board,
-    //     ArrayList<Integer> pits,
-    //     ArrayList<Integer> banks
-    // ) {
-    //     this.board = board;
-    //     this.lastMovement = (AwaleMovement) board.getGame().getLastMovement();
-    //     this.upperPlayer = board.getGame().getPlayers().get(0);
-    //     this.currentPlayer = board.getGame().getCurrentPlayer();
-    //     this.pits = pits;
-    //     this.banks = banks;
-    //     this.isFinalState = board.getGame().isFinalState(this);
-    // }
-
-    // public AwaleBoardState(
-    //     AwaleBoardState state,
-    //     AwaleMovement lastMovement,
-    //     Player currentPlayer,
-    //     ArrayList<Integer> pits,
-    //     ArrayList<Integer> banks
-    // ) {
-    //     this.board = state.getBoard();
-    //     this.lastMovement = lastMovement;
-    //     this.upperPlayer = state.getUpperPlayer();
-    //     this.currentPlayer = currentPlayer;
-    //     this.pits = pits;
-    //     this.banks = banks;
-    //     this.isFinalState = board.getGame().isFinalState(this);
-    // }
-
-    public void reset(
-        AwaleBoardStateFactory.Auth auth,
+    public AwaleBoardState(
         AwaleBoard board,
+        ArrayList<Integer> pits,
+        ArrayList<Integer> banks
+    ) {
+        this.board = board;
+        this.lastMovement = (AwaleMovement) board.getGame().getLastMovement();
+        this.upperPlayer = board.getGame().getPlayers().get(0);
+        this.currentPlayer = board.getGame().getCurrentPlayer();
+        this.pits = pits;
+        this.banks = banks;
+        this.isFinalState = board.getGame().isFinalState(this);
+    }
+
+    public AwaleBoardState(
+        AwaleBoardState state,
         AwaleMovement lastMovement,
-        Player upperPlayer,
         Player currentPlayer,
         ArrayList<Integer> pits,
         ArrayList<Integer> banks
     ) {
-        Objects.requireNonNull(auth);
-
-        this.board = board;
+        this.board = state.getBoard();
         this.lastMovement = lastMovement;
-        this.upperPlayer = upperPlayer;
+        this.upperPlayer = state.getUpperPlayer();
         this.currentPlayer = currentPlayer;
         this.pits = pits;
         this.banks = banks;
@@ -132,11 +110,6 @@ public class AwaleBoardState implements BoardState {
 
     public List<Integer> getPits() {
         return Collections.unmodifiableList(pits);
-    }
-
-    public ArrayList<Integer> getModifiablePits(AwaleBoardStateFactory.Auth auth) {
-        Objects.requireNonNull(auth);
-        return pits;
     }
 
     public int getPitIndex(Vector3 position) {
@@ -219,11 +192,6 @@ public class AwaleBoardState implements BoardState {
         return Collections.unmodifiableList(banks);
     }
 
-    public ArrayList<Integer> getModifiableBanks(AwaleBoardStateFactory.Auth auth) {
-        Objects.requireNonNull(auth);
-        return banks;
-    }
-
     public int getPlayerBank() {
         return getPlayerBank(currentPlayer);
     }
@@ -252,6 +220,38 @@ public class AwaleBoardState implements BoardState {
         }
     }
 
+    public byte[] getSerializedBoard() {
+        int playerPitCount = pits.size() / 2;
+
+        byte[] serializedBoard = 
+            new byte[1 + pits.size() * 3 + banks.size() * 2];
+
+        serializedBoard[0] = 0;  // +1: response type
+        int offset = 1;
+
+        for (int i = pits.size() - 1; i >= playerPitCount; --i) {
+            Vector3 pitPosition = getPitPosition(i);
+            serializedBoard[offset++] = (byte) (int) pitPosition.getX();
+            serializedBoard[offset++] = (byte) (int) pitPosition.getY();
+            serializedBoard[offset++] = (byte) (int) pits.get(i);
+        }
+
+        for (int i = 0; i < playerPitCount; ++i) {
+            Vector3 pitPosition = getPitPosition(i);
+            serializedBoard[offset++] = (byte) (int) pitPosition.getX();
+            serializedBoard[offset++] = (byte) (int) pitPosition.getY();
+            serializedBoard[offset++] = (byte) (int) pits.get(i);
+        }
+
+        serializedBoard[offset++] = 1;
+        serializedBoard[offset++] = (byte) (int) banks.get(1);
+
+        serializedBoard[offset++] = 0;
+        serializedBoard[offset++] = (byte) (int) banks.get(0);
+
+        return serializedBoard;
+    }
+
     @Override
     public String toString() {
         String s = "";
@@ -274,11 +274,6 @@ public class AwaleBoardState implements BoardState {
         s += "\n";
         s += banks.get(1);
         s += "\n\n";
-
-        // 83, 61668
-        // if (s.equals("22\n1 0 1 1 1 0 \n0 0 1 0 1 0 \n20\n") && Game.i > 155) {
-        //     throw new IllegalStateException();
-        // }
 
         return s;
     }
