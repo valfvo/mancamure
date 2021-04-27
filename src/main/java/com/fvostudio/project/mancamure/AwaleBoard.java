@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class AwaleBoard extends Board {
+    public enum POV {
+        UPPER_PLAYER,
+        LOWER_PLAYER
+    }
+
     private AwaleBoardState state;
     private int lines = 2;
     private int columns = 6;

@@ -3,7 +3,6 @@ package com.fvostudio.project.mancamure;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.Movement;
@@ -212,6 +211,10 @@ public class AwaleBoardState implements BoardState {
         }
     }
 
+    public int getOpponentBank() {
+        return getPlayerBank(getOpponent());
+    }
+
     public int getOpponentBank(Player player) {
         if (player == upperPlayer) {
             return banks.get(1);
@@ -220,7 +223,7 @@ public class AwaleBoardState implements BoardState {
         }
     }
 
-    public byte[] getSerializedBoard() {
+    public byte[] getSerializedBoardFromUpperPlayerPOV() {
         int playerPitCount = pits.size() / 2;
 
         byte[] serializedBoard = 
@@ -250,6 +253,46 @@ public class AwaleBoardState implements BoardState {
         serializedBoard[offset++] = (byte) (int) banks.get(0);
 
         return serializedBoard;
+    }
+
+    public byte[] getSerializedBoardFromLowerPlayerPOV() {
+        int playerPitCount = pits.size() / 2;
+
+        byte[] serializedBoard = 
+            new byte[1 + pits.size() * 3 + banks.size() * 2];
+
+        serializedBoard[0] = 0;  // +1: response type
+        int offset = 1;
+
+        for (int i = playerPitCount - 1; i >= 0; --i) {
+            Vector3 pitPosition = getPitPosition(i);
+            serializedBoard[offset++] = (byte) (int) pitPosition.getX();
+            serializedBoard[offset++] = (byte) (int) pitPosition.getY();
+            serializedBoard[offset++] = (byte) (int) pits.get(i);
+        }
+
+        for (int i = playerPitCount; i < pits.size(); ++i) {
+            Vector3 pitPosition = getPitPosition(i);
+            serializedBoard[offset++] = (byte) (int) pitPosition.getX();
+            serializedBoard[offset++] = (byte) (int) pitPosition.getY();
+            serializedBoard[offset++] = (byte) (int) pits.get(i);
+        }
+
+        serializedBoard[offset++] = 0;
+        serializedBoard[offset++] = (byte) (int) banks.get(0);
+
+        serializedBoard[offset++] = 1;
+        serializedBoard[offset++] = (byte) (int) banks.get(1);
+
+        return serializedBoard;
+    }
+
+    public byte[] getSerializedBoard(AwaleBoard.POV pov) {
+        if (pov == AwaleBoard.POV.UPPER_PLAYER) {
+            return getSerializedBoardFromUpperPlayerPOV();
+        } else {
+            return getSerializedBoardFromLowerPlayerPOV();
+        }
     }
 
     @Override

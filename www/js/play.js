@@ -1,8 +1,29 @@
+const GameType = {
+  "EVE": 0,
+  "PVE": 1,
+  "PVP": 2
+};
+
+const Role = {
+  "OBSERVER": 0,
+  "PLAYER": 1
+};
+
+const gameSettings = [
+  { gameType: GameType.EVE, role: Role.OBSERVER },
+  { gameType: GameType.PVE, role: Role.PLAYER },
+  { gameType: GameType.PVP, role: Role.PLAYER }
+];
+
 anchors = document.querySelectorAll('.yu-anchor');
 for (const anchor of anchors) {
-    anchor.onclick = function(e) {
-        window.location = this.dataset.yuHref;
-    }
+  anchor.onclick = function(e) {
+    const settings = gameSettings[this.dataset.gameSettings];
+    sessionStorage.setItem('gameType', settings.gameType);
+    sessionStorage.setItem('role', settings.role);
+
+    window.location = this.dataset.yuHref;
+  }
 }
 
 // function anime(index) {

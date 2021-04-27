@@ -17,6 +17,7 @@ html, body {
 .board {
     /* width: 500px;
     height: 100px; */
+    position: relative;
     background-image: url('../assets/images/wood-texture.jpg');
     background-size: cover;
     border-radius: 250px;
@@ -56,6 +57,30 @@ html, body {
     border-radius: 50px;
     margin: 10px;
     box-shadow: inset -2px -2px 5px black;
+    color: #e1d5b0;
+}
+
+.bank::after {
+    content: attr(data-seed-count);
+    position: absolute;
+    top: calc(50% - 0.6em - 5px);
+    font-size: 1.5em;
+    font-family: 'Montserrat';
+    text-align: center;
+    text-shadow: 2px 2px 4px black;
+    /* color: #a79763; */
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 5px 15px;
+    border-radius: 50px;
+    box-shadow: inset -1px -1px 3px black;
+}
+
+.right.bank::after {
+    left: calc(100% + 30px);
+}
+
+.left.bank::after {
+    right: calc(100% + 30px);
 }
 
 .pit {
@@ -66,15 +91,55 @@ html, body {
     border-radius: 50px;
     margin: 10px;
     box-shadow: inset -2px -2px 5px black;
+    text-align: center;
 }
 
-.player-element.pit:hover {
+.pit::before {
+    content: attr(data-seed-count);
+    position: absolute;
+    left: 0;
+    right: 0;
+    font-size: 1.5em;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 2px 2px 4px #8d8d8d;
+    color: #6a4a35;
+}
+
+.top .pit::before {
+    bottom: calc(100% + 30px);
+    /* color: black; */
+    /* color: #a79763; */
+    /* color: #e1d5b0; */
+    /* color: white; */
+    /* background-color: white; */
+    /* background: url('../assets/images/small-wood-texture.png'); */
+    /* background-size: cover; */
+    /* padding: 5px 15px; */
+    /* border-radius: 50px; */
+    /* box-shadow: 0px 0px 7px 0px black; */
+    /* box-shadow: 2px 2px 5px grey; */
+    /* pointer-events: none; */
+}
+
+/* .top .pit[data-seed-count="0"]::before {
+    display: none;
+} */
+
+.bottom .pit::before {
+    top: calc(100% + 30px);
+    /* pointer-events: none; */
+}
+
+.legal:hover {
     box-shadow: inset 0px 0px 6px 2px #8ae68a, 0 0 6px 2px #8ae68a;
     cursor: pointer;
 }
 
-.red {
+.illegal:hover {
     box-shadow: inset 0px 0px 6px 2px #f75c54, 0 0 6px 2px #f75c54;
+    cursor: not-allowed;
 }
 
 .seed {

@@ -1,78 +1,60 @@
 package com.fvostudio.project.mancamure;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.fvostudio.project.mancamure.gom.BoardState;
 import com.fvostudio.project.mancamure.gom.Cell;
 import com.fvostudio.project.mancamure.gom.Game;
 import com.fvostudio.project.mancamure.gom.Movement;
 import com.fvostudio.project.mancamure.gom.Observable;
+import com.fvostudio.project.mancamure.gom.Observer;
 import com.fvostudio.project.mancamure.gom.OwnableElement;
 import com.fvostudio.project.mancamure.gom.Player;
 import com.fvostudio.project.mancamure.gom.util.Pair;
 import com.fvostudio.project.mancamure.gom.util.Vector3;
 
 public class Awale extends Game implements Observable {
-    private ArrayList<Socket> observerSockets = new ArrayList<>();
-
-    // private Socket clientSocket;
-
-    // public Awale() {
-    //     this.observerSockets = 
-    //     // this.args = args;
-    //     // this.clientSocket = clientSocket;
-    // }
-
-    // @Override
-    // public void run() {
-    //     AwaleBoard board = new AwaleBoard();
-    //     setBoard(board);
-
-    //     boolean isAbPruningEnabled = Boolean.valueOf(args.get(2));
-
-    //     HumanPlayer playerOne = new HumanPlayer(this.clientSocket);
-    //     add(playerOne);
-
-    //     // AIPlayer playerOne = new AIPlayer();
-    //     // add(playerOne);
-    //     // int depthOne = Integer.valueOf(args.get(0));
-    //     // AwaleMinmax minmaxOne = new AwaleMinmax(board, depthOne, playerOne);
-    //     // minmaxOne.setAbPruningEnabled(isAbPruningEnabled);
-    //     // playerOne.setAlgorithm(minmaxOne);
-
-    //     AIPlayer playerTwo = new AIPlayer();
-    //     add(playerTwo);
-    //     int depthTwo = Integer.valueOf(args.get(1));
-    //     AwaleMinmax minmaxTwo = new AwaleMinmax(board, depthTwo, playerTwo);
-    //     minmaxTwo.setAbPruningEnabled(isAbPruningEnabled);
-    //     playerTwo.setAlgorithm(minmaxTwo);
-
-    //     start();
-    // }
+    private ArrayList<AwaleObserver> observers = new ArrayList<>();
+    private int roundWithoutSeedCollectionCount = 0;
 
     @Override
-    public List<Socket> getObservers() {
-        return Collections.unmodifiableList(observerSockets);
+    public List<AwaleObserver> getObservers() {
+        return Collections.unmodifiableList(observers);
     }
 
     @Override
-    public void addObserver(Socket observerSocket) {
-        this.observerSockets.add(observerSocket);
+    public void addObserver(Observer observer) {
+        Objects.requireNonNull(observer);
+        assert(observer instanceof AwaleObserver);
+
+        this.observers.add((AwaleObserver) observer);
     }
 
     @Override
-    public void addObservers(List<Socket> observerSockets) {
-        this.observerSockets.addAll(observerSockets);
+    public void addObservers(List<? extends Observer> observers) {
+        for (Observer observer : observers) {
+            addObserver(observer);
+        }
+    }
+
+    public void notifyObserversOfMovement(AwaleMovement movement) {
+        byte[] serializedMovement =
+            movement.getSerializationFrom((AwaleBoardState) getBoard().getState());
+
+        for (AwaleObserver observer : observers) {
+            observer.update(serializedMovement);
+        }
     }
 
     public void notifyObserversOfBoardUpdate() {
         AwaleBoardState currentState = (AwaleBoardState) getBoard().getState();
-        notifyObservers(currentState.getSerializedBoard());
+
+        for (AwaleObserver observer : observers) {
+            observer.update(currentState.getSerializedBoard(observer.getPOV()));
+        }
     }
 
     public void notifyObserversOfGameEnd() {
@@ -102,14 +84,33 @@ public class Awale extends Game implements Observable {
     }
 
     @Override
+    public void onMovement(Movement movement) {
+        notifyObserversOfMovement((AwaleMovement) movement);
+    }
+
+    @Override
     public void onEnd() {
         notifyObserversOfGameEnd();
     }
 
     @Override
     public void startNextRound() {
+        AwaleBoardState oldState = (AwaleBoardState) getBoard().getState();
+        int oldBankOne = oldState.getPlayerBank(players.get(0));
+        int oldBankTwo = oldState.getPlayerBank(players.get(1));
+
         super.startNextRound();
         notifyObserversOfBoardUpdate();
+
+        AwaleBoardState currentState = (AwaleBoardState) getBoard().getState();
+        int currentBankOne = currentState.getPlayerBank(players.get(0));
+        int currentBankTwo = currentState.getPlayerBank(players.get(1));
+
+        if (currentBankOne > oldBankOne || currentBankTwo > oldBankTwo) {
+            ++roundWithoutSeedCollectionCount;
+        } else {
+            roundWithoutSeedCollectionCount = 0;
+        }
     }
 
     @Override
@@ -129,8 +130,8 @@ public class Awale extends Game implements Observable {
     }
 
     /**
-     * @param obj pair<Integer, Vector3> that represents the number of seeds in
-     *  the pit + its position
+     * @param obj pair<Integer, Integer> that represents the number of seeds in
+     *  the pit + its index
      */
     @Override
     public ArrayList<Movement> getPossibleMovementsFrom(Object obj) {
@@ -188,7 +189,9 @@ public class Awale extends Game implements Observable {
 
     @Override
     public void checkForGameEnd() {
-        isFinished = getBoard().getState().isFinalState();
+        isFinished =
+            getBoard().getState().isFinalState()
+            || roundWithoutSeedCollectionCount >= 15;
     }
 
     @Override

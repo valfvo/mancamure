@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
 
 import com.fvostudio.project.mancamure.gom.Element;
 import com.fvostudio.project.mancamure.gom.GameHandler;
@@ -36,15 +34,15 @@ public class App {
     }
 
     private static Element runningEveGames = new Element();
-    private static LinkedList<Socket> waitingEveObservers = new LinkedList<>();
+    private static LinkedList<AwaleObserver> waitingEveObservers = new LinkedList<>();
 
     private static Element runningPveGames = new Element();
-    // private static LinkedList<Socket> waitingPvePlayers = new LinkedList<>();
-    private static LinkedList<Socket> waitingPveObservers = new LinkedList<>();
+    // private static LinkedList<AwaleObserver> waitingPvePlayers = new LinkedList<>();
+    private static LinkedList<AwaleObserver> waitingPveObservers = new LinkedList<>();
 
     private static Element runningPvpGames = new Element();
-    private static LinkedList<Socket> waitingPvpPlayers = new LinkedList<>();
-    private static LinkedList<Socket> waitingPvpObservers = new LinkedList<>();
+    private static LinkedList<AwaleObserver> waitingPvpPlayers = new LinkedList<>();
+    private static LinkedList<AwaleObserver> waitingPvpObservers = new LinkedList<>();
 
     public static void onEveGameRequest(Socket clientSocket, Role role) {
         // waitingEveObservers.offer(clientSocket);
@@ -58,7 +56,10 @@ public class App {
             boolean isAbPruningEnabled = input.read() != 0;
             int depth = input.read();
 
-            waitingPveObservers.offer(clientSocket);
+            AwaleObserver upperPlayer =
+                new AwaleObserver(clientSocket, AwaleBoard.POV.UPPER_PLAYER);
+
+            waitingPveObservers.offer(upperPlayer);
 
             Awale game = new Awale();
             game.addObservers(waitingPveObservers);
@@ -85,48 +86,87 @@ public class App {
         } else {
             GameHandler lastPveGame = (GameHandler) runningPveGames.getLastChild();
 
+            // TODO: get observer's pov
+            AwaleObserver observer =
+                new AwaleObserver(clientSocket, AwaleBoard.POV.UPPER_PLAYER);
+
             if (lastPveGame == null) {
-                waitingPveObservers.offer(clientSocket);
+                waitingPveObservers.offer(observer);
             } else {
                 Awale game = (Awale) lastPveGame.getGame();
-                game.addObserver(clientSocket);
+                game.addObserver(observer);
             }
         }
     }
 
     public static void onPvpGameRequest(Socket clientSocket, Role role) {
-        // waitingPvpObservers.offer(clientSocket);
-        // if (role == Role.PLAYER) {
-        //     waitingPvpPlayers.offer(clientSocket);
-        // }
-        throw new UnsupportedOperationException();
+        // TODO: handle external observer
+        if (waitingPvpPlayers.size() > 0) {
+            AwaleObserver lowerPlayer =
+                new AwaleObserver(clientSocket, AwaleBoard.POV.LOWER_PLAYER);
+
+            waitingPvpObservers.offer(lowerPlayer);
+
+            Awale game = new Awale();
+            game.addObservers(waitingPvpObservers);
+
+            AwaleBoard board = new AwaleBoard();
+            game.setBoard(board);
+
+            Socket upperPlayerSocket = waitingPvpPlayers.get(0).getSocket();
+            HumanPlayer playerOne = new HumanPlayer(upperPlayerSocket);
+            game.add(playerOne);
+
+            Socket lowerPlayerSocket = lowerPlayer.getSocket();
+            HumanPlayer playerTwo = new HumanPlayer(lowerPlayerSocket);
+            game.add(playerTwo);
+
+            GameHandler gameHandler = new GameHandler(game);
+            runningPvpGames.appendChild(gameHandler);
+
+            Thread gameThread = new Thread(gameHandler);
+            gameThread.start();
+
+            waitingPvpObservers.clear();
+            waitingPvpPlayers.clear();
+        } else {
+            AwaleObserver upperPlayer =
+                new AwaleObserver(clientSocket, AwaleBoard.POV.UPPER_PLAYER);
+
+            waitingPvpObservers.offer(upperPlayer);
+            waitingPvpPlayers.offer(upperPlayer);
+        }
     }
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = new ServerSocket(3034);
 
-        for (;;) {
-            // client request
-            // gameType | role | algorithm | depth
-            Socket clientSocket = serverSocket.accept();
-            InputStream input = clientSocket.getInputStream();
+        try {
+            for (;;) {
+                // client request
+                // gameType | role | algorithm | depth
+                Socket clientSocket = serverSocket.accept();
+                InputStream input = clientSocket.getInputStream();
 
-            GameType gameType = GameType.valueOf(input.read());
-            Role role = Role.valueOf(input.read());
+                GameType gameType = GameType.valueOf(input.read());
+                Role role = Role.valueOf(input.read());
 
-            switch (gameType) {
-                case EVE:
-                    onEveGameRequest(clientSocket, role);
-                    break;
-                case PVE:
-                    onPveGameRequest(clientSocket, role);
-                    break;
-                case PVP:
-                    onPvpGameRequest(clientSocket, role);
-                    break;
-                default:
-                    break;
+                switch (gameType) {
+                    case EVE:
+                        onEveGameRequest(clientSocket, role);
+                        break;
+                    case PVE:
+                        onPveGameRequest(clientSocket, role);
+                        break;
+                    case PVP:
+                        onPvpGameRequest(clientSocket, role);
+                        break;
+                    default:
+                        break;
+                }
             }
+        } finally {
+            serverSocket.close();
         }
     }
 }

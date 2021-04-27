@@ -8,7 +8,7 @@ public abstract class Game {
     public static final class Auth { private Auth() {} }
     private static final Auth auth = new Auth();
 
-    public static int i = 0;
+    private int roundCount = 0;
 
     private Board board;
     private Movement lastMovement;
@@ -86,15 +86,9 @@ public abstract class Game {
         currentPlayerIndex = -1;
 
         while (!isFinished) {
-            ++i;
-            if (i > 1000) {
-                break;
-            }
+            ++roundCount;
             initializeNextRound();
             startNextRound();
-            // break;
-            // System.out.println(i);
-            // System.out.println(getBoard().getState().toString());
             checkForGameEnd();
         }
 
@@ -102,6 +96,8 @@ public abstract class Game {
     }
 
     public void onStart() {}
+
+    public void onMovement(Movement movement) {}
 
     public void onEnd() {}
 
@@ -122,6 +118,7 @@ public abstract class Game {
         do {
             movement = getCurrentPlayer().play();
         } while (!isLegal(movement));
+        onMovement(movement);
 
         movement.apply(getBoard());
         lastMovement = movement;

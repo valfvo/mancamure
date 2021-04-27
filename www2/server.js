@@ -7,10 +7,17 @@ const io = require('socket.io')(server, {path: '/ws/socket.io'});
 const DataType = {
   "BOARD": 0,
   "MOVEMENT": 1,
-  "GAME_END": 2
+  "GAME_END": 2,
+  "PLAY_REQUEST": 3
 };
 
-const DataSize = [41, 0, 1];
+const DataSize = [41, 0, 2, 19];
+
+const GameType = {
+  "EVE": 0,
+  "PVE": 1,
+  "PVP": 2
+};
 
 class GameResponse {
   constructor() {
@@ -21,7 +28,7 @@ class GameResponse {
 
   add(data) {
     if (this.buffer) {
-      this.buffer = Buffer.concat(this.buffer, data);
+      this.buffer = Buffer.concat([this.buffer, data]);
     } else {
       this.buffer = Buffer.from(data);
       this.updateData();
@@ -48,68 +55,153 @@ class GameResponse {
     }
   }
 
+  onMovement(callback) {
+    this.movementCallback = callback;
+  }
+
   onBoardUpdate(callback) {
-    this.callback = callback;
+    this.boardUpdateCallback = callback;
   }
 
   onGameEnd(callback) {
-    this.callback2 = callback;
+    this.gameEndCallback = callback;
+  }
+
+  onPlayRequest(callback) {
+    this.playRequestCallback = callback;
+  }
+
+  parseBoard() {
+    // JSON : {pits: [{x: .., y: .., seedCount: ..}, {..}]}
+    let json = {};
+    let offset = 1;
+
+    let pits = new Array(12);
+    let banks = new Array(2);
+
+    for (let i = 0; i < 12; ++i) {
+      pits[i] = {
+        x: this.buffer[offset++],
+        y: this.buffer[offset++],
+        seedCount: this.buffer[offset++]
+      };
+    }
+
+    for (let i = 0; i < 2; ++i) {
+      banks[i] = {
+        position: this.buffer[offset++],
+        seedCount: this.buffer[offset++]
+      };
+    }
+
+    json = {pits: pits, banks: banks};
+
+    if (typeof this.boardUpdateCallback === "function") {
+      this.boardUpdateCallback(json);
+    }
+  }
+
+  parseMovement() {
+    // JSON (movementData) : {
+    //   startingPit: { x, y, seedCount },
+    //   destinationPits: [ { x, y }, ... ],
+    //   opponentPits: [ { x, y, shallBeCollected, receivingBank }, ... ] }
+
+    let json = {};
+    let offset = 2;
+
+    json.startingPit = {
+      x: this.buffer[offset++],
+      y: this.buffer[offset++],
+      seedCount: this.buffer[offset++]
+    };
+
+    json.destinationPits = [];
+    for (let i = 0; i < json.startingPit.seedCount; ++i) {
+      json.destinationPits[i] = {
+        x: this.buffer[offset++],
+        y: this.buffer[offset++]
+      };
+    }
+
+    json.opponentPits = [];
+    for (let i = 0; i < 6; ++i) {
+      const opponentPit = {
+        x: this.buffer[offset++],
+        y: this.buffer[offset++],
+      }
+
+      const bank = this.buffer[offset++];
+      if (bank != 255) {
+        opponentPit.shallBeCollected = true;
+        opponentPit.receivingBank = bank;
+      } else {
+        opponentPit.shallBeCollected = false;
+      }
+
+      json.opponentPits[i] = opponentPit;
+    }
+
+    if (typeof this.movementCallback === "function") {
+      this.movementCallback(json);
+    }
+  }
+
+  parseGameEnd() {
+    let json = {};
+    let offset = 1;
+
+    if (typeof this.gameEndCallback === "function") {
+      this.gameEndCallback(json);
+    }
+  }
+
+  parsePlayRequest() {
+    // JSON : {playerPits: [{x, y, legality}, ...]}
+    let json = {};
+    let offset = 1;
+
+    let playerPits = new Array(6);
+    for (let i = 0; i < 6; ++i) {
+      playerPits[i] = {
+        x: this.buffer[offset++],
+        y: this.buffer[offset++],
+        legality: this.buffer[offset++]
+      }
+    }
+
+    json = { playerPits: playerPits };
+
+    if (typeof this.playRequestCallback === "function") {
+      this.playRequestCallback(json);
+    }
   }
 
   parseData() {
+    console.log('dataType:', this.dataType);
+
     switch (this.dataType) {
       case DataType.BOARD:
-        // JSON : {pits: [{x: .., y: .., seedCount: ..}, {..}]}
-        let pits = new Array(12);
-        let banks = new Array(2);
-        let offset = 1;
-
-        for (let i = 0; i < 12; ++i) {
-          pits[i] = {
-            x: this.buffer[offset++],
-            y: this.buffer[offset++],
-            seedCount: this.buffer[offset++]
-          };
-        }
-
-        for (let i = 0; i < 2; ++i) {
-          banks[i] = {
-            position: this.buffer[offset++],
-            seedCount: this.buffer[offset++]
-          };
-        }
-
-        const json = {pits: pits, banks: banks};
-
-        if (typeof this.callback === "function") {
-          this.callback(json);
-        }
-
-        this.buffer = this.buffer.slice(offset);
-        if (this.buffer.length == 0) {
-          this.buffer = undefined;
-        }
-        this.updateData();
-
+        this.parseBoard();
         break;
       case DataType.MOVEMENT:
-        break
+        this.parseMovement();
+        break;
       case DataType.GAME_END:
-        let offset2 = 1;
-
-        if (typeof this.callback2 === "function") {
-          this.callback2({});
-        }
-
-        this.buffer = this.buffer.slice(offset2);
-        if (this.buffer.length == 0) {
-          this.buffer = undefined;
-        }
-        this.updateData();
+        this.parseGameEnd();
+        break;
+      case DataType.PLAY_REQUEST:
+        this.parsePlayRequest();
         break;
       default:
         break;
     }
+
+    this.buffer = this.buffer.slice(this.dataSize);
+    if (this.buffer.length == 0) {
+      this.buffer = undefined;
+    }
+    this.updateData();
   }
 }
 
@@ -118,12 +210,22 @@ io.on('connection', socket => {
   let gameSocket;
 
   socket.on('game-connection', data => {
-    const rawData = [
-      data.gameType,
-      data.role,
-      data.isAbPruningEnabled,
-      data.depth
-    ];
+    let rawData;
+    switch (data.gameType) {
+      case GameType.PVE:
+        rawData = [
+          data.gameType,
+          data.role,
+          data.isAbPruningEnabled,
+          data.depth
+        ];
+        break;
+      case GameType.PVP:
+        rawData = [data.gameType, data.role];
+        break;
+      default:
+        break;
+    }
 
     gameSocket = net.createConnection(3034);
     gameSocket.write(new Uint8Array(rawData));
@@ -141,10 +243,19 @@ io.on('connection', socket => {
       }
     });
 
+    response.onMovement(json => {
+      socket.emit('movement', json);
+    });
+
+    response.onPlayRequest(json => {
+      console.log('sent play request');
+      socket.emit('play-request', json);
+    });
+
     response.onGameEnd(json => {
       console.log('game end');
       socket.emit('game-end', json);
-    })
+    });
 
     gameSocket.on('data', data => {
       response.add(data);

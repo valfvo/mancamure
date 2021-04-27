@@ -1,7 +1,5 @@
 package com.fvostudio.project.mancamure.gom;
 
-import java.util.ArrayList;
-
 public class GameHandler extends Element implements Runnable {
     private Game game;
 
