@@ -10,7 +10,7 @@ html, body {
     height: 100%;
     display: grid;
     grid-template-rows: 30% 70%;
-    background-image: url("../assets/images/lion.jpg");
+    background-image: url("../assets/images/main-background.png");
     background-size: cover;
     background-position: center;
     color: white;

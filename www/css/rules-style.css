@@ -1,0 +1,93 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background-color: #EAEAEA;
+}
+
+#main-container {
+  height: 95vh;
+  width: 95vw;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: 40px 1fr;
+}
+
+#back-button {
+  text-decoration: none;
+  color: black;   
+  font-size: 1.4em;
+}
+#back-button:hover {
+  font-size: 1.5em;
+}
+
+.rules-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 25px;
+}
+
+.flip-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-self: center;
+  justify-self: center;
+  background-color: transparent;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;  
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 25px;
+}
+
+.flip-card-front {
+  color: white;
+  font-family: 'Montserrat';
+  font-size: 2em;
+  text-shadow: 1px 1px 2px black;
+}
+
+.purpose-front {
+  background-color: #38a8b3;
+}
+.how-to-play-front {
+  background-color: #ffc71a;
+}
+.illegal-move-front {
+  background-color: #a069ba;
+}
+.game-end-front {
+  background-color: #95c501;
+}
+
+.flip-card-back {
+  background-color: white;
+  transform: rotateY(180deg);
+  font-family: 'Montserrat-Regular';
+  font-size: 1.3em;
+}
+
