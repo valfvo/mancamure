@@ -81,6 +81,21 @@ public class AwaleMovement implements Movement {
         AwaleBoardState resultingState =
             new AwaleBoardState(state, this, state.getOpponent(), newPits, newBanks);
 
+        if (  // in the resulting state the player is the opponent
+            resultingState.isFinalState()
+            && resultingState.getRemainingOpponentSeedCount() <= 0
+        ) {
+            int bankIndex = resultingState.getPlayerBankIndex();
+            int firstPitIndex =
+                resultingState.getFirstPitIndex(resultingState.getCurrentPlayer());
+            int lastPitIndex = firstPitIndex + playerPitCount - 1;
+
+            for (int i = firstPitIndex; i <= lastPitIndex; ++i) {
+                newBanks.set(bankIndex, newBanks.get(bankIndex) + newPits.get(i));
+                newPits.set(i, 0);
+            }
+        }
+
         return resultingState;
     }
 
@@ -117,7 +132,6 @@ public class AwaleMovement implements Movement {
             (destination % pitCount) / playerPitCount != playerSide;
 
         ArrayList<Integer> newPits = new ArrayList<>(pits);
-        ArrayList<Integer> newBanks = new ArrayList<>(state.getBanks());
 
         int playerBankIndex = state.getPlayerBankIndex();
 
@@ -143,8 +157,6 @@ public class AwaleMovement implements Movement {
             i >= 0 && i / playerPitCount != playerSide;
             --i
         ) {
-            int seedCount = newPits.get(i);
-
             Vector3 pitPosition = state.getPitPosition(i);
             serializedMovement[offset++] = (byte) (int) pitPosition.getX();
             serializedMovement[offset++] = (byte) (int) pitPosition.getY();
@@ -167,6 +179,21 @@ public class AwaleMovement implements Movement {
             ) {
                 serializedMovement[seedToCollectOffset] = (byte) playerBankIndex;
                 seedToCollectOffset += 3;
+            }
+
+            AwaleBoardState resultingState = getResultingState(state);
+
+            // in the resulting state the player is the opponent
+            if (resultingState.isFinalState()
+                && resultingState.getRemainingOpponentSeedCount() <= 0
+            ) {
+                int bankIndex = resultingState.getPlayerBankIndex();
+                // offset of the bank of the first opponent's pit
+                seedToCollectOffset = 2 + 3 + 2 * startingPitSeedCount + 2;
+                for (int i = 0; i < 6; ++i) {
+                    serializedMovement[seedToCollectOffset] = (byte) bankIndex;
+                    seedToCollectOffset += 3;
+                }
             }
         }
 

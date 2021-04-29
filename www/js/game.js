@@ -11,17 +11,46 @@ const Role = {
 
 const settings = {
   gameType: parseInt(sessionStorage.getItem('gameType')),
-  role: parseInt(sessionStorage.getItem('role')),
-  isAbPruningEnabled: sessionStorage.getItem('isAbPruningEnabled') === 'true',
-  depth: parseInt(sessionStorage.getItem('depth'))
-};
+  role: parseInt(sessionStorage.getItem('role'))
+}
 
 if (isNaN(settings.gameType) || isNaN(settings.role)) {
   window.location = 'play.html';
-} else if (
-  settings.gameType != GameType.PVP && isNaN(settings.depth)
-) {
-  window.location = 'play.html';
+}
+
+switch (settings.gameType) {
+  case GameType.PVE:
+    settings.isAbPruningEnabled =
+      sessionStorage.getItem('isAbPruningEnabled') === 'true';
+    settings.depth = parseInt(sessionStorage.getItem('depth'));
+
+    if (isNaN(settings.isAbPruningEnabled) || isNaN(settings.depth)) {
+      window.location = 'play.html';
+    }
+    break;
+  case GameType.PVP:
+    break;
+  case GameType.EVE:
+      settings.isAbPruningEnabledForAIOne =
+        sessionStorage.getItem('isAbPruningEnabledForAIOne') === 'true';
+      settings.depthOfAIOne =
+        parseInt(sessionStorage.getItem('depthOfAIOne'));
+      settings.isAbPruningEnabledForAITwo =
+        sessionStorage.getItem('isAbPruningEnabledForAITwo') === 'true';
+      settings.depthOfAITwo =
+        parseInt(sessionStorage.getItem('depthOfAITwo'));
+
+      if (
+        typeof settings.isAbPruningEnabledForAIOne !== 'boolean'
+        || isNaN(settings.depthOfAIOne)
+        || typeof settings.isAbPruningEnabledForAIOne !== 'boolean'
+        || isNaN(settings.depthOfAITwo)
+      ) {
+        window.location = 'play.html';
+      }
+    break;
+  default:
+    break;
 }
 
 const socket = io('wss://mancamure.fvo.app', {path: '/ws/socket.io'});

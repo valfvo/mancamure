@@ -6,6 +6,8 @@
         <title>AI vs AI</title>
         <link href="css/AI_vs_AI_style.css" rel="stylesheet">
         <link href="css/font_style.css" rel="stylesheet">
+
+        <script src="js/eve.js" defer></script>
     </head>
     <body>
         <div id="main_container">
@@ -16,7 +18,7 @@
             <div id="center_container">
                 <h1>AI configuration</h1>
     
-                <form action="" method="post">
+                <div class="configuration-form">
                     <div id="two_sides">
                         <div class="left_side">
                             <h3>AI 1</h3>
@@ -26,17 +28,17 @@
                                 <div>
                                     <label for="algorithm">Algorithm</label>
                                     <select name="choiceAlgorithm" id="algorithm">
-                                        <option value="ABminmax">&alpha;&beta; minmax</option>
-                                        <option value="Basicminmax">basic minmax</option>
+                                        <option value="false">Basic Minmax</option>
+                                        <option value="true" selected>&alpha;&beta; Minmax</option>
                                     </select>
                                 </div>
                             </div>
-            
+
                             <!-- horizon -->
                             <div class="element_form">
                                 <div>
-                                    <label for="depth">depth</label>
-                                    <input type="number" id="depth" min="0" max="11" value="0">
+                                    <label for="depth">Depth</label>
+                                    <input type="number" id="depth" min="0" max="11" value="4">
                                 </div>
                             </div>
                         </div>
@@ -47,27 +49,26 @@
                             <!-- choix algorithme -->
                             <div class="element_form">
                                 <div>
-                                    <label for="algorithm">Algorithm</label>
-                                    <select name="choiceAlgorithm" id="algorithm">
-                                        <option value="ABminmax">&alpha;&beta; minmax</option>
-                                        <option value="Basicminmax">basic minmax</option>
+                                    <label for="algorithm2">Algorithm</label>
+                                    <select name="choiceAlgorithm" id="algorithm2">
+                                        <option value="false">Basic Minmax</option>
+                                        <option value="true" selected>&alpha;&beta; Minmax</option>
                                     </select>
                                 </div>
                             </div>
-            
+
                             <!-- horizon -->
                             <div class="element_form">
                                 <div>
-                                    <label for="depth">depth</label>
-                                    <input type="number" id="depth" min="0" max="11" value="0">
+                                    <label for="depth2">Depth</label>
+                                    <input type="number" id="depth2" min="0" max="11" value="10">
                                 </div>
                             </div>
                         </div>
                     </div>
-    
-                    <input type="submit" name="confirm" id="confirm_button" 
-                        value="Confirm">
-                </form>
+
+                    <button type="button" id="confirm_button">Confirm</button>
+                </div>
             </div>
         </div>
     </body>

@@ -22,6 +22,10 @@ public abstract class Game {
         return board;
     }
 
+    public int getRoundCount() {
+        return roundCount;
+    }
+
     public Player getCurrentPlayer() {
         if (currentPlayerIndex >= 0) {
             return players.get(currentPlayerIndex);

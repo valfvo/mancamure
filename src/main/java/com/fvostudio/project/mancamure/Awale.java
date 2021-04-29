@@ -107,9 +107,9 @@ public class Awale extends Game implements Observable {
         int currentBankTwo = currentState.getPlayerBank(players.get(1));
 
         if (currentBankOne > oldBankOne || currentBankTwo > oldBankTwo) {
-            ++roundWithoutSeedCollectionCount;
-        } else {
             roundWithoutSeedCollectionCount = 0;
+        } else {
+            ++roundWithoutSeedCollectionCount;
         }
     }
 
@@ -175,7 +175,14 @@ public class Awale extends Game implements Observable {
             (AwaleBoardState) movement.getResultingState(state);
 
         List<Integer> resultingOpponentPits =
-        resultingState.getOpponentPits(state.getCurrentPlayer());
+            resultingState.getOpponentPits(state.getCurrentPlayer());
+
+        // the player is starving himself but the opponent can't feed him
+        if (resultingState.getPlayerBank()
+            + resultingState.getOpponentBank() == 48
+        ) {
+            return true;
+        }
 
         // can't starve the opponent    
         for (int pit : resultingOpponentPits) {
@@ -189,9 +196,13 @@ public class Awale extends Game implements Observable {
 
     @Override
     public void checkForGameEnd() {
-        isFinished =
-            getBoard().getState().isFinalState()
-            || roundWithoutSeedCollectionCount >= 15;
+        AwaleBoardState currentState = (AwaleBoardState) getBoard().getState();
+
+        boolean shallBeFinishedByForce =
+            roundWithoutSeedCollectionCount >= 30
+            && currentState.getRemainingSeedCount() <= 10;
+
+        isFinished = currentState.isFinalState() || shallBeFinishedByForce;
     }
 
     @Override
@@ -206,11 +217,8 @@ public class Awale extends Game implements Observable {
         }
 
         // 3 seeds or less on the board
-        // ArrayList<Integer> pits = state.getPits();
         List<Integer> playerPits = state.getPlayerPits();
         List<Integer> opponentPits = state.getOpponentPits();
-        // int pitCount = pits.size();
-        // int playerPitCount = pitCount / 2;
 
         int playerSeedCount = 0;
         int opponentSeedCount = 0;
@@ -236,10 +244,13 @@ public class Awale extends Game implements Observable {
         // a starved opponent can not be fed
         if (opponentSeedCount <= 0) {
             boolean isOpponentFeedable = false;
-            int maxIndex = playerPits.size() - 1;
 
-            for (int i = maxIndex; !isOpponentFeedable && i >= 0; --i) {
-                isOpponentFeedable = playerPits.get(i) > maxIndex - i;
+            for (BoardState nextBoardState : state.getNextStates()) {
+                AwaleBoardState nextState = (AwaleBoardState) nextBoardState;
+                if (nextState.getRemainingOpponentSeedCount() > 0) {
+                    isOpponentFeedable = true;
+                    break;
+                }
             }
 
             return !isOpponentFeedable;

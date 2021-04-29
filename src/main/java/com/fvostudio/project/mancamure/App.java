@@ -44,11 +44,50 @@ public class App {
     private static LinkedList<AwaleObserver> waitingPvpPlayers = new LinkedList<>();
     private static LinkedList<AwaleObserver> waitingPvpObservers = new LinkedList<>();
 
-    public static void onEveGameRequest(Socket clientSocket, Role role) {
-        // waitingEveObservers.offer(clientSocket);
-        throw new UnsupportedOperationException();
-    }
+    public static void onEveGameRequest(Socket clientSocket, Role role) throws IOException {
+        if (role == Role.OBSERVER) {
+            InputStream input = clientSocket.getInputStream();
 
+            boolean isAbPruningEnabledForAIOne = input.read() != 0;
+            int depthOfAIOne = input.read();
+
+            boolean isAbPruningEnabledForAITwo = input.read() != 0;
+            int depthOfAITwo = input.read();
+
+            AwaleObserver observer =
+                new AwaleObserver(clientSocket, AwaleBoard.POV.LOWER_PLAYER);
+            waitingEveObservers.offer(observer);
+
+            Awale game = new Awale();
+            game.addObservers(waitingEveObservers);
+
+            AwaleBoard board = new AwaleBoard();
+            game.setBoard(board);
+
+            AIPlayer playerOne = new AIPlayer();
+            game.add(playerOne);
+            AwaleMinmax minmaxPlayerOne =
+            new AwaleMinmax(board, depthOfAIOne, playerOne);
+            minmaxPlayerOne.setAbPruningEnabled(isAbPruningEnabledForAIOne);
+            playerOne.setAlgorithm(minmaxPlayerOne);
+
+            AIPlayer playerTwo = new AIPlayer();
+            game.add(playerTwo);
+            AwaleMinmax minmaxPlayerTwo =
+            new AwaleMinmax(board, depthOfAITwo, playerTwo);
+            minmaxPlayerTwo.setAbPruningEnabled(isAbPruningEnabledForAITwo);
+            playerTwo.setAlgorithm(minmaxPlayerTwo);
+
+            GameHandler gameHandler = new GameHandler(game);
+            runningEveGames.appendChild(gameHandler);
+
+            Thread gameThread = new Thread(gameHandler);
+            gameThread.start();
+
+            waitingEveObservers.clear();
+        }
+    }
+    
     public static void onPveGameRequest(Socket clientSocket, Role role) throws IOException {
         if (role == Role.PLAYER) {
             InputStream input = clientSocket.getInputStream();
