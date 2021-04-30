@@ -29,6 +29,8 @@ public abstract class Minmax implements Algorithm {
 
     @Override
     public void execute() {
+        bestMovement = null;
+
         BoardState currentState = board.getState();
         double bestValue = Double.NEGATIVE_INFINITY;
 
@@ -37,13 +39,17 @@ public abstract class Minmax implements Algorithm {
             : this::basicMinmax;
 
         for (BoardState state : currentState.getNextStates()) {
-            beforeNextState(currentState, depth + 1);
+            beforeNextState(currentState, state, depth + 1);
             double value = minmax.apply(state, depth);
 
-            if (value > bestValue) {
+            if (value >= bestValue) {
                 bestValue = value;
                 bestMovement = state.getLastMovement();
             }
+        }
+
+        if (bestMovement == null) {
+            throw new IllegalStateException("Minmax could not choose a movement");
         }
     }
 
@@ -98,7 +104,7 @@ public abstract class Minmax implements Algorithm {
         }
 
         for (BoardState nextState : nextStates) {
-            beforeNextState(state, currentDepth);
+            beforeNextState(state, nextState, currentDepth);
             double value = basicMinmax(nextState, currentDepth - 1);
             bestValue = compare.apply(bestValue, value);
         }
@@ -132,8 +138,10 @@ public abstract class Minmax implements Algorithm {
             compare = Math::min;
         }
 
+        beforeNextStates(state, currentDepth);
+
         for (BoardState nextState : nextStates) {
-            beforeNextState(state, currentDepth);
+            beforeNextState(state, nextState, currentDepth);
             double value = abMinmax(nextState, currentDepth - 1, a, b);
             bestValue = compare.apply(bestValue, value);
 
@@ -151,7 +159,10 @@ public abstract class Minmax implements Algorithm {
         return bestValue;
     }
 
-    public void beforeNextState(BoardState state, int currentDepth) {}
+    public void beforeNextState(BoardState state, BoardState nextState,
+                                int currentDepth) {}
+
+    public void beforeNextStates(BoardState state, int currentDepth) {}
 
     public abstract double evaluate(BoardState state);
 }

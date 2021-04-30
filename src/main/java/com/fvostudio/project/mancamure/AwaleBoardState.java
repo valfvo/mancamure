@@ -187,6 +187,26 @@ public class AwaleBoardState implements BoardState {
         throw new UnsupportedOperationException();
     }
 
+    public int getRemainingSeedCount(List<Integer> pitList) {
+        int remainingSeedCount = 0;
+        for (int pit : pitList) {
+            remainingSeedCount += pit;
+        }
+        return remainingSeedCount;
+    }
+
+    public int getRemainingSeedCount() {
+        return getRemainingSeedCount(pits);
+    }
+
+    public int getRemainingPlayerSeedCount() {
+        return getRemainingSeedCount(getPlayerPits());
+    }
+
+    public int getRemainingOpponentSeedCount() {
+        return getRemainingSeedCount(getOpponentPits());
+    }
+
     public List<Integer> getBanks() {
         return Collections.unmodifiableList(banks);
     }

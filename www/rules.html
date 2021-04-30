@@ -1,64 +1,100 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Rules of Awale</title>
-        <link href="css/rules_style.css" rel="stylesheet">
-        <link rel="stylesheet" href="css/font_style.css">
-    </head>
-    <body>
-        <div id="main_container">
-            <div>
-                <a id="back_button" href="index.html">back</a>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rules</title>
+    <link href="css/rules-style.css" rel="stylesheet">
+    <link href="css/font_style.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="main-container">
+      <div>
+        <a id="back-button" href="index.html">back</a>
+      </div>
+      
+      <div class="rules-area">
+
+        <div class="flip-card">
+          <div class="flip-card-inner purpose">
+            <div class="flip-card-front purpose-front">
+              <h2>Purpose</h2>
             </div>
-            <div>
-            <ul>
-                <li>
-                    But du jeu : S’emparer d’un maximum de graines. Le joueur qui a le plus de 25 graines l’emporte.
-                    Game purpose : Get as many seeds possible. The players who have at least 25 seeds Win.
-                </li>
-                <li>
-                    Le plateau se compose de 2x6 pits contenant chacun 4 graines et deux greniers à gauches et à droite. Les 6 pits en bas et le grenier à droite sont à vous.
-                    Pour jouer il suffit de cliquer sur un pit cela prend toutes les graines du trous et en dépose une dans chaque trou suivant celui qu’il a vidé.
-                    Boucle : Si le nombre de graines prises dans un trou de départ est supérieur à 11, cela fait que l’on va boucler un tour, 
-                    auquel cas, à chaque passage, la case de départ est sautée et donc toujours laissée vide.
-                    Capture : si la dernière graine est déposée dans un trou de l’adversaire comportant déjà 1 ou 2 graines, le joueur capture les 2 ou 3 graines résultantes. 
-                    Les graines capturées sont alors sorties du jeu (grenier) et le trou est laissé vide.
-                    Rafle : Lorsqu’un joueur s’empare de 2 ou 3 graines, si la case précédente contient également 2 ou 3 graines, elles sont capturées aussi et ainsi de suite.
-
-                    The BoardGame is made of 2x6 pits with 4 seeds in each pits and 2 banks in each side. The 6 pits below and the right bank is yours.
-                    To play you need to click on one pit, it will take all the seeds inside and put one in each next pits.
-                    Capture : If the last seed is drop on a oponent pit with 1-2 seeds, the player captures the 2-3 seeds and leaves an empty pit.
-                    Multiple capture : When a player captures 2-3 seeds, if the previous pit have also 2-3 seeds, they are also captured and so on.
-                    Loop : If there is 11 seeds or more in a pit, will do a loop, but the initial pit is skip and stay empty.
-
-
-                </li>
-                <li>
-                    
-                </li>
-                <li>
-                    Affamer : Un joueur n’a pas le droit de jouer un coup qui prenne toutes les graines du camp adverse. 
-                    Et si un joueur est affamer (plus aucune graines dans son camp) alors le joueur adverse et obligé de le nourrir.
-
-                    Starve : A player is not allowed to play a move which takes all of the oponent's seeds.
-                    And if a player is starving (no more seeds in his pits) the oponent is forced to feed him.
-
-                </li>
-                <li>
-                    Fin du jeu : le jeu se termine si : un des deux joueurs a au moins 25 graines dans son grenier.
-                                                        il ne reste 10 graines ou moins et qu'aucune graines n'ont été capturées depuis 15 tours.
-                                                        il y a 3 graines ou moins sur le plateau.
-
-                    End game : 
-                    The game end if :   A player have at least 25 seeds in his bank.
-                                        There is 3 or less seeds.
-                                        There is 10 or less seeds and no one capture a seed since 15 rounds.
-                </li>
-            </ul>
+            <div class="flip-card-back purpose-back">
+              <p class="flip-card-back-text">
+                Get as many seeds as possible. The first player who have 
+                25 seeds or more wins.
+              </p>
             </div>
-            <!-- <h1>Oups, the page is being created, come back later</h1> -->
+          </div>
         </div>
-    </body>
+        
+        <div class="flip-card">
+          <div class="flip-card-inner how-to-play">
+            <div class="flip-card-front how-to-play-front">
+              <h2>How to play</h2>
+            </div>
+            <div class="flip-card-back how-to-play-back">
+              <p class="flip-card-back-text">
+                The board game is made of 2x6 pits with 4 seeds in each pits and 
+                2 banks in each side. The 6 lower pits and the right bank are 
+                yours.
+                <br><br>
+                Click on one pit to sow its seeds in the following pits. 
+                Distribution is counterclockwise.
+                <br><br>
+                <b>Collection :</b> If the last sowed seed lands on a opponent pit
+                with 1 or 2 seeds, the player collects the 2 or 3 seeds and 
+                deposits them in his bank.
+                <br><br>
+                <b>Multiple collection :</b> After a collection, if the previous
+                pit also have 2 or 3 seeds, they are collected and so on.
+                <br><br>
+                <b>Granary :</b> A pit with 11 seeds or more is called a granary.
+                When a granary is played the initial pit is skipped and remains 
+                empty.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flip-card">
+          <div class="flip-card-inner illegal-move">
+            <div class="flip-card-front illegal-move-front">
+              <h2>Illegal move</h2>
+            </div>
+            <div class="flip-card-back illegal-move-back">
+              <p class="flip-card-back-text">
+                <b>Starvation :</b> A player is not allowed to play a move which
+                takes all the opponent's seeds. And if a player is starved
+                (no more seeds in his pits) the opponent must feed him.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flip-card">
+          <div class="flip-card-inner game-end">
+            <div class="flip-card-front game-end-front">
+              <h2>Game end</h2>
+            </div>
+            <div class="flip-card-back game-end-back">
+              <div class="flip-card-back-text">
+                <p>
+                  A game ends when : 
+                </p>
+                <ul>
+                  <li>A player have at least 25 seeds in his bank.</li>
+                  <li>There are 3 or less seeds remaining.</li>
+                  <li>There are 10 or less seeds and no one has collected a seed
+                      since 20 rounds. 
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

@@ -223,6 +223,16 @@ io.on('connection', socket => {
       case GameType.PVP:
         rawData = [data.gameType, data.role];
         break;
+      case GameType.EVE:
+        rawData = [
+          data.gameType,
+          data.role,
+          data.isAbPruningEnabledForAIOne,
+          data.depthOfAIOne,
+          data.isAbPruningEnabledForAITwo,
+          data.depthOfAITwo
+        ];
+        break;
       default:
         break;
     }
