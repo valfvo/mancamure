@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Rules of Awale</title>
+        <link href="css/rules_style.css" rel="stylesheet">
+        <link rel="stylesheet" href="css/font_style.css">
+    </head>
+    <body>
+        <div id="main_container">
+            <div>
+                <a id="back_button" href="index.html">back</a>
+            </div>
+            <div>
+            <ul>
+                <li>
+                    But du jeu : S’emparer d’un maximum de graines. Le joueur qui a le plus de 25 graines l’emporte.
+                    Game purpose : Get as many seeds possible. The players who have at least 25 seeds Win.
+                </li>
+                <li>
+                    Le plateau se compose de 2x6 pits contenant chacun 4 graines et deux greniers à gauches et à droite. Les 6 pits en bas et le grenier à droite sont à vous.
+                    Pour jouer il suffit de cliquer sur un pit cela prend toutes les graines du trous et en dépose une dans chaque trou suivant celui qu’il a vidé.
+                    Boucle : Si le nombre de graines prises dans un trou de départ est supérieur à 11, cela fait que l’on va boucler un tour, 
+                    auquel cas, à chaque passage, la case de départ est sautée et donc toujours laissée vide.
+                    Capture : si la dernière graine est déposée dans un trou de l’adversaire comportant déjà 1 ou 2 graines, le joueur capture les 2 ou 3 graines résultantes. 
+                    Les graines capturées sont alors sorties du jeu (grenier) et le trou est laissé vide.
+                    Rafle : Lorsqu’un joueur s’empare de 2 ou 3 graines, si la case précédente contient également 2 ou 3 graines, elles sont capturées aussi et ainsi de suite.
+
+                    The BoardGame is made of 2x6 pits with 4 seeds in each pits and 2 banks in each side. The 6 pits below and the right bank is yours.
+                    To play you need to click on one pit, it will take all the seeds inside and put one in each next pits.
+                    Capture : If the last seed is drop on a oponent pit with 1-2 seeds, the player captures the 2-3 seeds and leaves an empty pit.
+                    Multiple capture : When a player captures 2-3 seeds, if the previous pit have also 2-3 seeds, they are also captured and so on.
+                    Loop : If there is 11 seeds or more in a pit, will do a loop, but the initial pit is skip and stay empty.
+
+
+                </li>
+                <li>
+                    
+                </li>
+                <li>
+                    Affamer : Un joueur n’a pas le droit de jouer un coup qui prenne toutes les graines du camp adverse. 
+                    Et si un joueur est affamer (plus aucune graines dans son camp) alors le joueur adverse et obligé de le nourrir.
+
+                    Starve : A player is not allowed to play a move which takes all of the oponent's seeds.
+                    And if a player is starving (no more seeds in his pits) the oponent is forced to feed him.
+
+                </li>
+                <li>
+                    Fin du jeu : le jeu se termine si : un des deux joueurs a au moins 25 graines dans son grenier.
+                                                        il ne reste 10 graines ou moins et qu'aucune graines n'ont été capturées depuis 15 tours.
+                                                        il y a 3 graines ou moins sur le plateau.
+
+                    End game : 
+                    The game end if :   A player have at least 25 seeds in his bank.
+                                        There is 3 or less seeds.
+                                        There is 10 or less seeds and no one capture a seed since 15 rounds.
+                </li>
+            </ul>
+            </div>
+            <!-- <h1>Oups, the page is being created, come back later</h1> -->
+        </div>
+    </body>
+</html>
